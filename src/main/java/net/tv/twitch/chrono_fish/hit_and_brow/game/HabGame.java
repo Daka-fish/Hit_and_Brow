@@ -103,7 +103,6 @@ public class HabGame {
                 setRunning(true);
                 setTurnCount(0);
                 assignColors();
-                sendMessage("§e【ソロモード】§aでゲームを開始します");
             }
 
             if(getHabPlayers().size() > 2){

@@ -2,6 +2,8 @@ package net.tv.twitch.chrono_fish.hit_and_brow;
 
 import org.bukkit.Material;
 
+import java.util.ArrayList;
+
 public enum HabColor {
 
     BLACK("黒色","§0■",Material.BLACK_WOOL),
@@ -25,4 +27,12 @@ public enum HabColor {
     public String getName() {return name;}
     public String getColorBlock() {return colorBlock;}
     public Material getMaterial() {return material;}
+
+    public static ArrayList<Material> getMaterials(){
+        ArrayList<Material> materials = new ArrayList<>();
+        for(HabColor habColor : HabColor.values()){
+            materials.add(habColor.getMaterial());
+        }
+        return materials;
+    }
 }

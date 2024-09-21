@@ -1,9 +1,11 @@
 package net.tv.twitch.chrono_fish.hit_and_brow.game;
 
 import net.kyori.adventure.text.Component;
+import net.tv.twitch.chrono_fish.hit_and_brow.HabColor;
 import net.tv.twitch.chrono_fish.hit_and_brow.habItem.HabItem;
 import net.tv.twitch.chrono_fish.hit_and_brow.player.HabPlayer;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -18,13 +20,10 @@ public class HabListener implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e){
-        if(e.getItem() != null && habGame.getHabPlayer(e.getPlayer()) != null){
+        if(habGame.getHabPlayer(e.getPlayer()) != null){
             HabPlayer habPlayer = habGame.getHabPlayer(e.getPlayer());
-            if(e.getItem().equals(HabItem.HAB_STICK())){
-                habPlayer.getPlayer().openInventory(habPlayer.getColorInv());
-            }
 
-            if(e.getItem().equals(HabItem.HAB_BLAZE_ROD())){
+            if(e.getItem() != null && e.getItem().equals(HabItem.HAB_BLAZE_ROD())){
                 if(habGame.isRunning()){
                     if(habGame.getTurnPlayer().equals(habPlayer)){
                         habPlayer.submitColors();
@@ -32,6 +31,14 @@ public class HabListener implements Listener {
                     }else{
                         e.getPlayer().sendMessage("§cあなたのターンではありません");
                     }
+                }
+                return;
+            }
+
+            Block clickedBlock = e.getClickedBlock();
+            if(clickedBlock != null && HabColor.getMaterials().contains(clickedBlock.getType())){
+                if(habGame.isRunning()){
+                    clickedBlock.breakNaturally();
                 }
             }
         }

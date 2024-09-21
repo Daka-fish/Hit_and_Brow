@@ -46,10 +46,10 @@ public class HabPlayer {
         for(HabColor habColor : colors){
             if(correctColors.contains(habColor)){
                 if(correctColors.indexOf(habColor) == colors.indexOf(habColor)){
-                    brow++;
+                    hit++;
                     continue;
                 }
-                hit++;
+                brow++;
             }
         }
 
