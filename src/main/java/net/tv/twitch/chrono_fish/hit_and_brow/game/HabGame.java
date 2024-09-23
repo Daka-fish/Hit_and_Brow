@@ -7,9 +7,12 @@ import net.tv.twitch.chrono_fish.hit_and_brow.Hit_and_Brow;
 import net.tv.twitch.chrono_fish.hit_and_brow.habItem.HabItem;
 import net.tv.twitch.chrono_fish.hit_and_brow.player.HabPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,13 +29,24 @@ public class HabGame {
 
     private HabPlayer turnPlayer;
 
+    private final FileConfiguration config;
+
     public HabGame(Hit_and_Brow hit_and_brow){
         this.hit_and_brow = hit_and_brow;
         this.habPlayers = new ArrayList<>(2);
         this.correctColors = new ArrayList<>(4);
         this.isRunning = false;
         this.turnCount = 0;
+
+        File configFile = new File(hit_and_brow.getDataFolder(), "config.yml");
+        if(!configFile.exists()){
+            hit_and_brow.saveDefaultConfig();
+        }
+        this.config = hit_and_brow.getConfig();
+        hit_and_brow.saveConfig();
     }
+
+    public Hit_and_Brow getMain() {return hit_and_brow;}
 
     public ArrayList<HabPlayer> getHabPlayers() {return habPlayers;}
     public ArrayList<HabColor> getCorrectColors() {return correctColors;}
@@ -45,6 +59,8 @@ public class HabGame {
 
     public HabPlayer getTurnPlayer() {return turnPlayer;}
     public void setTurnPlayer(HabPlayer turnPlayer) {this.turnPlayer = turnPlayer;}
+
+    public FileConfiguration getConfig() {return config;}
 
     public HabPlayer getHabPlayer(Player player){
         HabPlayer target = null;
@@ -90,6 +106,13 @@ public class HabGame {
         for(int i=0; i<4; i++){
             correctColors.add(colorPool.get(i));
         }
+    }
+
+    public Location getBaseLocation(){
+        return new Location(hit_and_brow.getServer().getWorld("world"),
+                config.getDouble("hab.base-location.x"),
+                config.getDouble("hab.base-location.y"),
+                config.getDouble("hab.base-location.z"));
     }
 
     public void start(){

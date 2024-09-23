@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.tv.twitch.chrono_fish.hit_and_brow.game.HabGame;
 import net.tv.twitch.chrono_fish.hit_and_brow.HabColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -43,6 +44,15 @@ public class HabPlayer {
         int hit = 0;
         int brow = 0;
 
+        if(colors.contains(HabColor.BLACK)){
+            player.sendMessage("§c解答に不備があります");
+            habGame.getMain().getLogger().info(player.getUniqueId()+" try to submit these colors, but it failed");
+            for(HabColor habColor : colors){
+                habGame.getMain().getLogger().info(habColor.name());
+            }
+            return;
+        }
+
         for(HabColor habColor : colors){
             if(correctColors.contains(habColor)){
                 if(correctColors.indexOf(habColor) == colors.indexOf(habColor)){
@@ -69,16 +79,12 @@ public class HabPlayer {
     public ArrayList<HabColor> getPlayerColor(){
         int index = 0;
         ArrayList<HabColor> colors = new ArrayList<>();
-        for(int i = 0; i< colorInv.getSize(); i++){
-            if(index==4) break;
-            ItemStack item = colorInv.getItem(i);
-            for(HabColor habColor : HabColor.values()){
-                if(item != null && item.getType().equals(habColor.getMaterial())){
-                    colors.add(habColor);
-                    index++;
-                    break;
-                }
-            }
+        Location baseLoc = habGame.getBaseLocation().clone();
+        Location currentLoc = baseLoc.add(2*habGame.getTurnCount(),0,0);
+        for(int i=0; i<4; i++){
+            colors.add(index, HabColor.getHabColor(currentLoc.getBlock().getType()));
+            index++;
+            currentLoc.add(0,0,1);
         }
         return colors;
     }

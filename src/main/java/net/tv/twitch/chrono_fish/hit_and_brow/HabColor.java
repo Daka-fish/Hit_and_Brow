@@ -35,4 +35,16 @@ public enum HabColor {
         }
         return materials;
     }
+
+    public static HabColor getHabColor(Material material){
+        HabColor target = null;
+        for(HabColor habColor: HabColor.values()){
+            if(material.equals(habColor.getMaterial())){
+                target = habColor;
+                break;
+            }
+        }
+        if(target == null) target = HabColor.BLACK;
+        return target;
+    }
 }
