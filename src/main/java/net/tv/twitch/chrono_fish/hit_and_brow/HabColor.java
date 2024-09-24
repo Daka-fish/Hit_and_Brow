@@ -47,4 +47,5 @@ public enum HabColor {
         if(target == null) target = HabColor.BLACK;
         return target;
     }
+
 }
