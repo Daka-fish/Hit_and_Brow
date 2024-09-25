@@ -95,6 +95,7 @@ public class HabGame {
     }
 
     public void assignColors(){
+        correctColors.clear();
         ArrayList<HabColor> colorPool = new ArrayList<>(6);
         colorPool.add(HabColor.RED);
         colorPool.add(HabColor.WHITE);
@@ -117,20 +118,16 @@ public class HabGame {
 
     public void start(){
         if(!isRunning()){
-            if(getHabPlayers().size() == 2){
+            if(getHabPlayers().size() > 2 || getHabPlayers().size() == 0){
+                sendMessage("§cプレイヤーの人数を確認してください(現在の人数:§a"+getHabPlayers().size()+"§f人)");
+                return;
+            }
+
+            if(getHabPlayers().size() <= 2){
                 setRunning(true);
                 setTurnCount(0);
                 assignColors();
                 sendMessage("§aゲームを開始します");
-            }else if(getHabPlayers().size() == 1){
-                setRunning(true);
-                setTurnCount(0);
-                assignColors();
-            }
-
-            if(getHabPlayers().size() > 2){
-                sendMessage("§cプレイヤーの人数を確認してください(現在の人数:§a"+getHabPlayers().size()+"§f人)");
-                return;
             }
 
             setNextPlayer();
