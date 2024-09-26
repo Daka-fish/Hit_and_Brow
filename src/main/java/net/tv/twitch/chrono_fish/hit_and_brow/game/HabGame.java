@@ -8,6 +8,7 @@ import net.tv.twitch.chrono_fish.hit_and_brow.habItem.HabItem;
 import net.tv.twitch.chrono_fish.hit_and_brow.player.HabPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -115,6 +116,12 @@ public class HabGame {
                 config.getDouble("hab.base-location.y"),
                 config.getDouble("hab.base-location.z"));
     }
+    public Location getCorrectLocation(){
+        return new Location(hit_and_brow.getServer().getWorld("world"),
+                config.getDouble("hab.correct-location.x"),
+                config.getDouble("hab.correct-location.y"),
+                config.getDouble("hab.correct-location.z"));
+    }
 
     public void start(){
         if(!isRunning()){
@@ -163,5 +170,36 @@ public class HabGame {
             }
             sendMessage("かかったターン数:§e "+getTurnCount());
         },40L);
+    }
+
+    public void setBlackBlocks(){
+        Location baseLoc = getBaseLocation();
+        for(int i=0; i<14; i++){
+            for(int j=0; j<4; j++){
+                if(!baseLoc.getBlock().getType().equals(Material.BLACK_WOOL)){
+                    baseLoc.getBlock().setType(Material.BLACK_WOOL);
+                }
+                baseLoc.add(0,0,1);
+            }
+            baseLoc.add(2,0,-4);
+        }
+    }
+
+    public void setBlackCorrectBlock(){
+        Location correctLoc = getCorrectLocation();
+        for(int j=0; j<4; j++){
+            if(!correctLoc.getBlock().getType().equals(Material.BLACK_WOOL)){
+                correctLoc.getBlock().setType(Material.BLACK_WOOL);
+            }
+            correctLoc.add(0,0,1);
+        }
+    }
+
+    public void openCorrectBlock(){
+        Location correctLoc = getCorrectLocation();
+        for(int i=0; i<4; i++){
+            correctLoc.getBlock().setType(correctColors.get(i).getMaterial());
+            correctLoc.add(0,0,1);
+        }
     }
 }

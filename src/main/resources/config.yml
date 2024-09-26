@@ -3,3 +3,7 @@ hab:
     x: -15
     y: 21
     z: 13
+  correct-location:
+    x: 15
+    y: 21
+    z: 13
