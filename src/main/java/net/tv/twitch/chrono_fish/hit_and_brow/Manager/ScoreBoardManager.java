@@ -1,14 +1,15 @@
-package net.tv.twitch.chrono_fish.hit_and_brow.player;
+package net.tv.twitch.chrono_fish.hit_and_brow.Manager;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.tv.twitch.chrono_fish.hit_and_brow.HabColor;
+import net.tv.twitch.chrono_fish.hit_and_brow.player.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.*;
 
-public class HabScoreboard {
+public class ScoreBoardManager {
 
-    private final HabPlayer habPlayer;
+    private final CustomPlayer customPlayer;
 
     private final Scoreboard scoreboard;
     private final Objective obj;
@@ -16,8 +17,8 @@ public class HabScoreboard {
     private String correctColor;
     private String turnCount;
 
-    public HabScoreboard(HabPlayer habPlayer){
-        this.habPlayer = habPlayer;
+    public ScoreBoardManager(CustomPlayer customPlayer){
+        this.customPlayer = customPlayer;
         this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         this.obj = scoreboard.registerNewObjective("sidebar", Criteria.DUMMY, Component.text("-info-").decorate(TextDecoration.BOLD));
         this.obj.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -37,7 +38,7 @@ public class HabScoreboard {
     public void setCorrectColor(){
         scoreboard.resetScores(correctColor);
         StringBuilder str = new StringBuilder(" └  ");
-        for(HabColor habColor : habPlayer.getHabGame().getCorrectColors()){
+        for(HabColor habColor : customPlayer.getHabGame().getCorrectColors()){
             str.append(habColor.getColorBlock());
         }
         correctColor = str.toString();
@@ -46,7 +47,7 @@ public class HabScoreboard {
 
     public void setTurnCount(){
         scoreboard.resetScores(turnCount);
-        turnCount = " └  "+ "§e"+ habPlayer.getHabGame().getTurnCount();
+        turnCount = " └  "+ "§e"+ customPlayer.getHabGame().getTurnCount();
         obj.getScore(turnCount).setScore(-5);
     }
 

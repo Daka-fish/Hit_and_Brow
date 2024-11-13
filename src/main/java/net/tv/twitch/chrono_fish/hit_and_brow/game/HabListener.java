@@ -3,7 +3,7 @@ package net.tv.twitch.chrono_fish.hit_and_brow.game;
 import net.kyori.adventure.text.Component;
 import net.tv.twitch.chrono_fish.hit_and_brow.HabColor;
 import net.tv.twitch.chrono_fish.hit_and_brow.habItem.HabItem;
-import net.tv.twitch.chrono_fish.hit_and_brow.player.HabPlayer;
+import net.tv.twitch.chrono_fish.hit_and_brow.player.CustomPlayer;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -14,20 +14,20 @@ import org.bukkit.inventory.ItemStack;
 
 public class HabListener implements Listener {
 
-    private final HabGame habGame;
+    private final Game game;
 
-    public HabListener(HabGame habGame){this.habGame = habGame;}
+    public HabListener(Game game){this.game = game;}
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e){
-        if(habGame.getHabPlayer(e.getPlayer()) != null){
-            HabPlayer habPlayer = habGame.getHabPlayer(e.getPlayer());
+        if(game.getHabPlayer(e.getPlayer()) != null){
+            CustomPlayer customPlayer = game.getHabPlayer(e.getPlayer());
 
             if(e.getItem() != null && e.getItem().equals(HabItem.HAB_BLAZE_ROD())){
-                if(habGame.isRunning()){
-                    if(habGame.getTurnPlayer().equals(habPlayer)){
-                        habPlayer.submitColors();
-                        habGame.setNextPlayer();
+                if(game.isRunning()){
+                    if(game.getTurnPlayer().equals(customPlayer)){
+                        customPlayer.submitColors();
+                        game.setNextPlayer();
                     }else{
                         e.getPlayer().sendMessage("§cあなたのターンではありません");
                     }
@@ -37,7 +37,7 @@ public class HabListener implements Listener {
 
             Block clickedBlock = e.getClickedBlock();
             if(clickedBlock != null && HabColor.getMaterials().contains(clickedBlock.getType())){
-                if(habGame.isRunning()){
+                if(game.isRunning()){
                     clickedBlock.breakNaturally();
                 }
             }

@@ -1,7 +1,7 @@
 package net.tv.twitch.chrono_fish.hit_and_brow;
 
-import net.tv.twitch.chrono_fish.hit_and_brow.game.HabGame;
-import net.tv.twitch.chrono_fish.hit_and_brow.player.HabPlayer;
+import net.tv.twitch.chrono_fish.hit_and_brow.game.Game;
+import net.tv.twitch.chrono_fish.hit_and_brow.player.CustomPlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,35 +21,35 @@ public class Commands implements CommandExecutor {
             Player snd = (Player) sender;
             if(command.getName().equalsIgnoreCase("hab")){
                 if(args.length > 0){
-                    HabGame habGame = hit_and_brow.getHabGame();
+                    Game game = hit_and_brow.getHabGame();
                     switch(args[0]){
                         case "start":
-                            habGame.start();
+                            game.start();
                             break;
 
                         case "join":
-                            for(HabPlayer habPlayer : habGame.getHabPlayers()){
-                                if(habPlayer.getPlayer().equals(snd)){
+                            for(CustomPlayer customPlayer : game.getHabPlayers()){
+                                if(customPlayer.getPlayer().equals(snd)){
                                     snd.sendMessage("§c既に参加しています");
                                     return false;
                                 }
                             }
-                            HabPlayer habPlayer = new HabPlayer(habGame, snd);
-                            habGame.getHabPlayers().add(habPlayer);
+                            CustomPlayer customPlayer = new CustomPlayer(game, snd);
+                            game.getHabPlayers().add(customPlayer);
                             snd.sendMessage("[Hit_and_brow] ゲームに参加しました");
                             break;
 
                         case "leave":
-                            HabPlayer target = habGame.getHabPlayer(snd);
+                            CustomPlayer target = game.getHabPlayer(snd);
                             if(target != null){
-                                habGame.getHabPlayers().remove(target);
+                                game.getHabPlayers().remove(target);
                             }else{
                                 snd.sendMessage("§cゲームに参加していません");
                             }
                             break;
 
                         case "finish":
-                            habGame.finish();
+                            game.finish();
                             break;
 
                         default:
