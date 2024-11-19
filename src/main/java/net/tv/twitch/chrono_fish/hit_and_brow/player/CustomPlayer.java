@@ -30,22 +30,13 @@ public class CustomPlayer {
 
     public void submitColors(){
         ArrayList<HabColor> correctColors = game.getCorrectColors();
-        ArrayList<HabColor> colors = getPlayerColor();
+        ArrayList<HabColor> playerColor = getPlayerColor();
         int hit = 0;
         int brow = 0;
 
-        if(colors.contains(HabColor.BLACK)){
-            player.sendMessage("§c解答に不備があります");
-            game.getMain().getLogger().info(player.getUniqueId()+" try to submit these colors, but it failed");
-            for(HabColor habColor : colors){
-                game.getMain().getLogger().info(habColor.name());
-            }
-            return;
-        }
-
-        for(HabColor habColor : colors){
+        for(HabColor habColor : playerColor){
             if(correctColors.contains(habColor)){
-                if(correctColors.indexOf(habColor) == colors.indexOf(habColor)){
+                if(correctColors.indexOf(habColor) == playerColor.indexOf(habColor)){
                     hit++;
                     continue;
                 }
@@ -53,7 +44,13 @@ public class CustomPlayer {
             }
         }
 
-        if(brow == 4){
+        String yourAnswer = "提出した答え：";
+        for(int i=0;i<4;i++) {
+            yourAnswer += playerColor.get(i).getColorBlock();
+        }
+        player.sendMessage(yourAnswer);
+
+        if(hit == 4){
             game.finish();
             return;
         }
@@ -63,7 +60,7 @@ public class CustomPlayer {
             habPlayer.getHabScoreboard().setTurnCount();
         });
 
-        player.sendMessage("§e"+hit+"§fヒット、"+"§a"+brow+"ブロー！");
+        player.sendMessage("§e"+hit+"§fヒット、"+"§a"+brow+"§fブロー！");
     }
 
     public ArrayList<HabColor> getPlayerColor(){

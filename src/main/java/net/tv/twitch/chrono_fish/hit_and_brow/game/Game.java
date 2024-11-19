@@ -89,12 +89,10 @@ public class Game {
 
     public void start(){
         if(!isRunning()){
-            /*
-            if(getHabPlayers().size() <= 1){
+            if(getHabPlayers().size() == 0){
                 sendMessage("§cプレイヤーの人数を確認してください(現在の人数:§a"+getHabPlayers().size()+"§c人)");
                 return;
             }
-            */
             this.blockManager = new BlockManager(this);
             setRunning(true);
             setTurnCount(0);
@@ -126,7 +124,11 @@ public class Game {
         setRunning(false);
         Bukkit.getScheduler().runTaskLater(hit_and_brow,()->{
             customPlayers.forEach(customPlayer -> customPlayer.getHabScoreboard().setCorrectColor());
-            sendMessage("正解は、");
+            StringBuilder correctIs = new StringBuilder("正解は、");
+            for(HabColor habColor:correctColors){
+                correctIs.append(habColor.getColorBlock());
+            }
+            sendMessage(correctIs.toString());
             for(HabColor habColor : correctColors){
                 sendMessage(habColor.getName());
             }
