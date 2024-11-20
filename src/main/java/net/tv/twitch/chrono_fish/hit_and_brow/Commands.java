@@ -6,6 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class Commands implements CommandExecutor {
 
@@ -16,7 +17,7 @@ public class Commands implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
         if(sender instanceof Player){
             Player snd = (Player) sender;
             if(command.getName().equalsIgnoreCase("hab")){
@@ -24,25 +25,29 @@ public class Commands implements CommandExecutor {
                     Game game = hit_and_brow.getHabGame();
                     switch(args[0]){
                         case "start":
+                            if(game.getParticipants().size() == 0){
+                                snd.sendMessage("§a参加しているプレイヤーがいません");
+                                return false;
+                            }
                             game.start();
                             break;
 
                         case "join":
-                            for(CustomPlayer customPlayer : game.getHabPlayers()){
+                            for(CustomPlayer customPlayer : game.getParticipants()){
                                 if(customPlayer.getPlayer().equals(snd)){
                                     snd.sendMessage("§c既に参加しています");
                                     return false;
                                 }
                             }
                             CustomPlayer customPlayer = new CustomPlayer(game, snd);
-                            game.getHabPlayers().add(customPlayer);
+                            game.getParticipants().add(customPlayer);
                             snd.sendMessage("[Hit_and_brow] ゲームに参加しました");
                             break;
 
                         case "leave":
-                            CustomPlayer target = game.getHabPlayer(snd);
+                            CustomPlayer target = game.getCustomPlayer(snd);
                             if(target != null){
-                                game.getHabPlayers().remove(target);
+                                game.getParticipants().remove(target);
                             }else{
                                 snd.sendMessage("§cゲームに参加していません");
                             }

@@ -9,7 +9,7 @@ import java.io.File;
 
 public class ConfigManager {
 
-    private FileConfiguration config;
+    private final FileConfiguration config;
 
     public ConfigManager(Hit_and_Brow hit_and_brow){
         File configFile = new File(hit_and_brow.getDataFolder(), "config.yml");
@@ -19,8 +19,6 @@ public class ConfigManager {
         config = hit_and_brow.getConfig();
         hit_and_brow.saveDefaultConfig();
     }
-
-    public  FileConfiguration getConfig() {return config;}
 
     public  Location getBaseLocation(){
         return new Location(Bukkit.getWorld("world"),

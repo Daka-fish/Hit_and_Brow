@@ -1,9 +1,9 @@
 package net.tv.twitch.chrono_fish.hit_and_brow.player;
 
 import net.tv.twitch.chrono_fish.hit_and_brow.Manager.ConfigManager;
-import net.tv.twitch.chrono_fish.hit_and_brow.Manager.ScoreBoardManager;
+import net.tv.twitch.chrono_fish.hit_and_brow.Manager.CustomBoard;
 import net.tv.twitch.chrono_fish.hit_and_brow.game.Game;
-import net.tv.twitch.chrono_fish.hit_and_brow.HabColor;
+import net.tv.twitch.chrono_fish.hit_and_brow.CustomColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -14,29 +14,29 @@ public class CustomPlayer {
     private final Game game;
     private final Player player;
 
-    private final ScoreBoardManager scoreBoardManager;
+    private final CustomBoard customBoard;
 
     public CustomPlayer(Game game, Player player){
         this.game = game;
         this.player = player;
-        this.scoreBoardManager = new ScoreBoardManager(this);
-        player.setScoreboard(scoreBoardManager.getScoreboard());
+        this.customBoard = new CustomBoard(this);
+        player.setScoreboard(customBoard.getScoreboard());
     }
 
-    public Game getHabGame() {return game;}
+    public Game getGame() {return game;}
     public Player getPlayer() {return player;}
 
-    public ScoreBoardManager getHabScoreboard() {return scoreBoardManager;}
+    public CustomBoard getHabScoreboard() {return customBoard;}
 
     public void submitColors(){
-        ArrayList<HabColor> correctColors = game.getCorrectColors();
-        ArrayList<HabColor> playerColor = getPlayerColor();
+        ArrayList<CustomColor> correctColors = game.getCorrectColors();
+        ArrayList<CustomColor> playerColor = getPlayerColor();
         int hit = 0;
         int brow = 0;
 
-        for(HabColor habColor : playerColor){
-            if(correctColors.contains(habColor)){
-                if(correctColors.indexOf(habColor) == playerColor.indexOf(habColor)){
+        for(CustomColor customColor : playerColor){
+            if(correctColors.contains(customColor)){
+                if(correctColors.indexOf(customColor) == playerColor.indexOf(customColor)){
                     hit++;
                     continue;
                 }
@@ -44,11 +44,11 @@ public class CustomPlayer {
             }
         }
 
-        String yourAnswer = "提出した答え：";
+        StringBuilder yourAnswer = new StringBuilder("[ターン"+game.getTurnCount()+"] 提出した答え：");
         for(int i=0;i<4;i++) {
-            yourAnswer += playerColor.get(i).getColorBlock();
+            yourAnswer.append(playerColor.get(i).getColorBlock());
         }
-        player.sendMessage(yourAnswer);
+        player.sendMessage(yourAnswer.toString());
 
         if(hit == 4){
             game.finish();
@@ -56,20 +56,18 @@ public class CustomPlayer {
         }
 
         game.setTurnCount(game.getTurnCount()+1);
-        game.getHabPlayers().forEach(habPlayer -> {
-            habPlayer.getHabScoreboard().setTurnCount();
-        });
+        game.getParticipants().forEach(habPlayer ->habPlayer.getHabScoreboard().setTurnCount());
 
         player.sendMessage("§e"+hit+"§fヒット、"+"§a"+brow+"§fブロー！");
     }
 
-    public ArrayList<HabColor> getPlayerColor(){
+    public ArrayList<CustomColor> getPlayerColor(){
         int index = 0;
-        ArrayList<HabColor> playerColor = new ArrayList<>();
+        ArrayList<CustomColor> playerColor = new ArrayList<>();
         Location baseLoc = new ConfigManager(game.getMain()).getBaseLocation().clone();
         Location currentLoc = baseLoc.add(2* game.getTurnCount(),0,0);
         for(int i=0; i<4; i++){
-            playerColor.add(index, HabColor.getHabColor(currentLoc.getBlock().getType()));
+            playerColor.add(index, CustomColor.getHabColor(currentLoc.getBlock().getType()));
             index++;
             currentLoc.add(0,0,1);
         }

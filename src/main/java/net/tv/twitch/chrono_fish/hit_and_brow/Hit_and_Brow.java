@@ -1,9 +1,11 @@
 package net.tv.twitch.chrono_fish.hit_and_brow;
 
 import net.tv.twitch.chrono_fish.hit_and_brow.game.Game;
-import net.tv.twitch.chrono_fish.hit_and_brow.game.HabListener;
+import net.tv.twitch.chrono_fish.hit_and_brow.game.Events;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Objects;
 
 public final class Hit_and_Brow extends JavaPlugin {
 
@@ -12,8 +14,8 @@ public final class Hit_and_Brow extends JavaPlugin {
     @Override
     public void onEnable() {
         this.game = new Game(this);
-        getCommand("hab").setExecutor(new Commands(this));
-        Bukkit.getPluginManager().registerEvents(new HabListener(game),this);
+        Objects.requireNonNull(getCommand("hab")).setExecutor(new Commands(this));
+        Bukkit.getPluginManager().registerEvents(new Events(game),this);
     }
 
     public Game getHabGame() {return game;}

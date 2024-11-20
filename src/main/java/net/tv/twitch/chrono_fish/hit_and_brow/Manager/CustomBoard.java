@@ -2,12 +2,12 @@ package net.tv.twitch.chrono_fish.hit_and_brow.Manager;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.tv.twitch.chrono_fish.hit_and_brow.HabColor;
+import net.tv.twitch.chrono_fish.hit_and_brow.CustomColor;
 import net.tv.twitch.chrono_fish.hit_and_brow.player.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.*;
 
-public class ScoreBoardManager {
+public class CustomBoard {
 
     private final CustomPlayer customPlayer;
 
@@ -17,7 +17,7 @@ public class ScoreBoardManager {
     private String correctColor;
     private String turnCount;
 
-    public ScoreBoardManager(CustomPlayer customPlayer){
+    public CustomBoard(CustomPlayer customPlayer){
         this.customPlayer = customPlayer;
         this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         this.obj = scoreboard.registerNewObjective("sidebar", Criteria.DUMMY, Component.text("-info-").decorate(TextDecoration.BOLD));
@@ -38,8 +38,8 @@ public class ScoreBoardManager {
     public void setCorrectColor(){
         scoreboard.resetScores(correctColor);
         StringBuilder str = new StringBuilder(" └  ");
-        for(HabColor habColor : customPlayer.getHabGame().getCorrectColors()){
-            str.append(habColor.getColorBlock());
+        for(CustomColor customColor : customPlayer.getGame().getCorrectColors()){
+            str.append(customColor.getColorBlock());
         }
         correctColor = str.toString();
         obj.getScore(correctColor).setScore(-2);
@@ -47,7 +47,7 @@ public class ScoreBoardManager {
 
     public void setTurnCount(){
         scoreboard.resetScores(turnCount);
-        turnCount = " └  "+ "§e"+ customPlayer.getHabGame().getTurnCount();
+        turnCount = " └  "+ "§e"+ customPlayer.getGame().getTurnCount();
         obj.getScore(turnCount).setScore(-5);
     }
 
@@ -55,7 +55,7 @@ public class ScoreBoardManager {
         scoreboard.resetScores(correctColor);
         StringBuilder str = new StringBuilder(" └  ");
         for(int i=0; i<4; i++){
-            str.append(HabColor.BLACK.getColorBlock());
+            str.append(CustomColor.BLACK.getColorBlock());
         }
         correctColor = str.toString();
         scoreboard.resetScores(turnCount);

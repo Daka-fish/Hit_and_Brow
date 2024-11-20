@@ -1,6 +1,5 @@
 package net.tv.twitch.chrono_fish.hit_and_brow.Manager;
 
-import net.tv.twitch.chrono_fish.hit_and_brow.Hit_and_Brow;
 import net.tv.twitch.chrono_fish.hit_and_brow.game.Game;
 import org.bukkit.Location;
 import org.bukkit.Material;

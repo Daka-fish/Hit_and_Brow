@@ -1,7 +1,7 @@
 package net.tv.twitch.chrono_fish.hit_and_brow.game;
 
 import net.kyori.adventure.text.Component;
-import net.tv.twitch.chrono_fish.hit_and_brow.HabColor;
+import net.tv.twitch.chrono_fish.hit_and_brow.CustomColor;
 import net.tv.twitch.chrono_fish.hit_and_brow.habItem.HabItem;
 import net.tv.twitch.chrono_fish.hit_and_brow.player.CustomPlayer;
 import org.bukkit.Material;
@@ -12,16 +12,16 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class HabListener implements Listener {
+public class Events implements Listener {
 
     private final Game game;
 
-    public HabListener(Game game){this.game = game;}
+    public Events(Game game){this.game = game;}
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e){
-        if(game.getHabPlayer(e.getPlayer()) != null){
-            CustomPlayer customPlayer = game.getHabPlayer(e.getPlayer());
+        if(game.getCustomPlayer(e.getPlayer()) != null){
+            CustomPlayer customPlayer = game.getCustomPlayer(e.getPlayer());
 
             if(e.getItem() != null && e.getItem().equals(HabItem.HAB_BLAZE_ROD())){
                 if(game.isRunning()){
@@ -36,7 +36,7 @@ public class HabListener implements Listener {
             }
 
             Block clickedBlock = e.getClickedBlock();
-            if(clickedBlock != null && HabColor.getMaterials().contains(clickedBlock.getType())){
+            if(clickedBlock != null && CustomColor.getMaterials().contains(clickedBlock.getType())){
                 if(game.isRunning()){
                     clickedBlock.breakNaturally();
                 }
