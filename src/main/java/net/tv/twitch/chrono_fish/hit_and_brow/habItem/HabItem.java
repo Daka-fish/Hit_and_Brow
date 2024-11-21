@@ -1,6 +1,8 @@
 package net.tv.twitch.chrono_fish.hit_and_brow.habItem;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -14,19 +16,27 @@ public class HabItem {
         bookMeta.displayName(Component.text("Hit_and_Brow"));
         bookMeta.setTitle("Hit_and_brow");
         bookMeta.setAuthor("UNKNOWN");
-        StringBuilder text = new StringBuilder();
 
-        bookMeta.addPages(Component.text(text.toString()));
+        Component text = Component.text("");
+        text = text.append(Component.text("\n\n◆参加する"))
+                .hoverEvent(HoverEvent.showText(Component.text("参加するにはここをクリック")))
+                .clickEvent(ClickEvent.runCommand("/hab join"));
+        text = text.append(Component.text("\n\n◆観戦者になる")
+                .hoverEvent(HoverEvent.showText(Component.text("観戦するにはここをクリック")))
+                .clickEvent(ClickEvent.runCommand("/hab leave")));
+        text = text.append(Component.text("\n\n◆参加者を確認する")
+                .hoverEvent(HoverEvent.showText(Component.text("参加者を見るにはここをクリック")))
+                .clickEvent(ClickEvent.runCommand("/hab list")));
+        text = text.append(Component.text("\n\n◆ゲームを開始する")
+                .hoverEvent(HoverEvent.showText(Component.text("ゲームを開始するにはここをクリック")))
+                .clickEvent(ClickEvent.runCommand("/hab start")));
+        text = text.append(Component.text("\n\n◆ゲームを終了する")
+                .hoverEvent(HoverEvent.showText(Component.text("ゲームを終了するにはここをクリック")))
+                .clickEvent(ClickEvent.runCommand("/hab finish")));
+
+        bookMeta.addPages(text);
         book.setItemMeta(bookMeta);
         return book;
-    }
-
-    public static ItemStack HAB_STICK(){
-        ItemStack stick = new ItemStack(Material.STICK);
-        ItemMeta stickMeta = stick.getItemMeta();
-        stickMeta.displayName(Component.text("カラーメニューを開く"));
-        stick.setItemMeta(stickMeta);
-        return stick;
     }
 
     public static ItemStack HAB_BLAZE_ROD(){

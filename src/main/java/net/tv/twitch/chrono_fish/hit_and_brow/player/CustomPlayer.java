@@ -44,7 +44,7 @@ public class CustomPlayer {
             }
         }
 
-        StringBuilder yourAnswer = new StringBuilder("[ターン"+game.getTurnCount()+"] 提出した答え：");
+        StringBuilder yourAnswer = new StringBuilder("[ターン"+(game.getTurnCount()+1)+"] 提出した答え：");
         for(int i=0;i<4;i++) {
             yourAnswer.append(playerColor.get(i).getColorBlock());
         }
@@ -59,6 +59,8 @@ public class CustomPlayer {
         game.getParticipants().forEach(habPlayer ->habPlayer.getHabScoreboard().setTurnCount());
 
         player.sendMessage("§e"+hit+"§fヒット、"+"§a"+brow+"§fブロー！");
+        game.setNextPlayer();
+        game.getTurnPlayer().getPlayer().sendMessage("§eあなたのターンです");
     }
 
     public ArrayList<CustomColor> getPlayerColor(){

@@ -64,7 +64,6 @@ public class Game {
     public void setNextPlayer(){
         int index = (participants.indexOf(getTurnPlayer()) + 1) % participants.size();
         setTurnPlayer(participants.get(index));
-        getTurnPlayer().getPlayer().sendMessage("§eあなたのターンです");
     }
 
     public void assignColors(){
@@ -96,14 +95,13 @@ public class Game {
             blockManager.setBlackBlocks();
 
             participants.forEach(customPlayer -> {
-                customPlayer.getPlayer().getInventory().setItem(0, HabItem.HAB_STICK());
-                customPlayer.getPlayer().getInventory().setItem(1, new ItemStack(CustomColor.WHITE.getMaterial(),4));
-                customPlayer.getPlayer().getInventory().setItem(2, new ItemStack(CustomColor.RED.getMaterial(),4));
-                customPlayer.getPlayer().getInventory().setItem(3, new ItemStack(CustomColor.BLUE.getMaterial(),4));
-                customPlayer.getPlayer().getInventory().setItem(5, new ItemStack(CustomColor.GREEN.getMaterial(),4));
-                customPlayer.getPlayer().getInventory().setItem(6, new ItemStack(CustomColor.PINK.getMaterial(),4));
-                customPlayer.getPlayer().getInventory().setItem(7, new ItemStack(CustomColor.YELLOW.getMaterial(),4));
-                customPlayer.getPlayer().getInventory().setItem(8, HabItem.HAB_BLAZE_ROD());
+                customPlayer.getPlayer().getInventory().addItem(new ItemStack(CustomColor.WHITE.getMaterial(),4));
+                customPlayer.getPlayer().getInventory().addItem(new ItemStack(CustomColor.RED.getMaterial(),4));
+                customPlayer.getPlayer().getInventory().addItem(new ItemStack(CustomColor.BLUE.getMaterial(),4));
+                customPlayer.getPlayer().getInventory().addItem(new ItemStack(CustomColor.GREEN.getMaterial(),4));
+                customPlayer.getPlayer().getInventory().addItem(new ItemStack(CustomColor.PINK.getMaterial(),4));
+                customPlayer.getPlayer().getInventory().addItem(new ItemStack(CustomColor.YELLOW.getMaterial(),4));
+                customPlayer.getPlayer().getInventory().addItem(HabItem.HAB_BLAZE_ROD());
                 customPlayer.getHabScoreboard().resetScoreboard();
             });
 

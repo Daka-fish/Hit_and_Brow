@@ -1,5 +1,6 @@
 package net.tv.twitch.chrono_fish.hit_and_brow;
 
+import net.tv.twitch.chrono_fish.hit_and_brow.game.Commands;
 import net.tv.twitch.chrono_fish.hit_and_brow.game.Game;
 import net.tv.twitch.chrono_fish.hit_and_brow.game.Events;
 import org.bukkit.Bukkit;
