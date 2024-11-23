@@ -3,9 +3,10 @@ package net.tv.twitch.chrono_fish.hit_and_brow.game;
 import net.tv.twitch.chrono_fish.hit_and_brow.CustomColor;
 import net.tv.twitch.chrono_fish.hit_and_brow.Hit_and_Brow;
 import net.tv.twitch.chrono_fish.hit_and_brow.Manager.BlockManager;
-import net.tv.twitch.chrono_fish.hit_and_brow.habItem.HabItem;
+import net.tv.twitch.chrono_fish.hit_and_brow.Manager.ConfigManager;
 import net.tv.twitch.chrono_fish.hit_and_brow.player.CustomPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,6 +19,8 @@ public class Game {
 
     private final ArrayList<CustomPlayer> participants;
     private final ArrayList<CustomColor> correctColors;
+
+    private final ConfigManager configManager;
 
     private boolean isRunning;
     private int turnCount;
@@ -32,12 +35,13 @@ public class Game {
         this.correctColors = new ArrayList<>(4);
         this.isRunning = false;
         this.turnCount = 0;
+        this.configManager = new ConfigManager(hit_and_brow);
     }
-
-    public Hit_and_Brow getMain() {return hit_and_brow;}
 
     public ArrayList<CustomPlayer> getParticipants() {return participants;}
     public ArrayList<CustomColor> getCorrectColors() {return correctColors;}
+
+    public ConfigManager getConfigManager() {return configManager;}
 
     public boolean isRunning() {return isRunning;}
     public void setRunning(boolean running) {isRunning = running;}
@@ -62,8 +66,32 @@ public class Game {
     public void sendMessage(String message){participants.forEach(customPlayer -> customPlayer.getPlayer().sendMessage(message));}
 
     public void setNextPlayer(){
-        int index = (participants.indexOf(getTurnPlayer()) + 1) % participants.size();
-        setTurnPlayer(participants.get(index));
+        if(isRunning){
+            if(getTurnCount()==0){
+                setTurnPlayer(participants.get(0));
+            }else{
+                int index = (participants.indexOf(getTurnPlayer()) + 1) % participants.size();
+                setTurnPlayer(participants.get(index));
+            }
+            Player currentPlayer = getTurnPlayer().getPlayer();
+            for(CustomColor cc: CustomColor.values()){
+                if(cc.equals(CustomColor.BLACK)) continue;
+                currentPlayer.getInventory().addItem(new ItemStack(cc.getMaterial(),4-getMaterialCount(currentPlayer, cc.getMaterial())));
+            }
+            currentPlayer.getInventory().addItem(new ItemStack(Material.BLAZE_ROD,1-getMaterialCount(currentPlayer, Material.BLAZE_ROD)));
+            setTurnCount(getTurnCount()+1);
+            currentPlayer.getPlayer().sendMessage("§e\nあなたのターン");
+        }
+    }
+
+    public int getMaterialCount(Player player, Material material){
+        int count = 0;
+        for(ItemStack item : player.getInventory().getContents()){
+            if(item != null && item.getType() == material){
+                count +=item.getAmount();
+            }
+        }
+        return count;
     }
 
     public void assignColors(){
@@ -77,40 +105,33 @@ public class Game {
         colorPool.add(CustomColor.YELLOW);
         Collections.shuffle(colorPool);
         for(int i=0; i<4; i++){
-            correctColors.add(colorPool.get(i));
-            hit_and_brow.consoleLog("color["+(i+1)+"] "+colorPool.get(i).getName());
+            correctColors.add(i,colorPool.get(i));
         }
     }
 
     public void start(){
         if(!isRunning()){
-
             this.blockManager = new BlockManager(this);
             setRunning(true);
-            setTurnCount(0);
-            assignColors();
 
-            setNextPlayer();
+            assignColors();
+            Collections.shuffle(participants);
 
             blockManager.setBlackBlocks();
+            participants.forEach(customPlayer -> customPlayer.getHabScoreboard().resetScoreboard());
 
-            participants.forEach(customPlayer -> {
-                customPlayer.getPlayer().getInventory().addItem(new ItemStack(CustomColor.WHITE.getMaterial(),4));
-                customPlayer.getPlayer().getInventory().addItem(new ItemStack(CustomColor.RED.getMaterial(),4));
-                customPlayer.getPlayer().getInventory().addItem(new ItemStack(CustomColor.BLUE.getMaterial(),4));
-                customPlayer.getPlayer().getInventory().addItem(new ItemStack(CustomColor.GREEN.getMaterial(),4));
-                customPlayer.getPlayer().getInventory().addItem(new ItemStack(CustomColor.PINK.getMaterial(),4));
-                customPlayer.getPlayer().getInventory().addItem(new ItemStack(CustomColor.YELLOW.getMaterial(),4));
-                customPlayer.getPlayer().getInventory().addItem(HabItem.HAB_BLAZE_ROD());
-                customPlayer.getHabScoreboard().resetScoreboard();
-            });
-
+            sendMessage("§eゲーム開始！");
+            setNextPlayer();
         }else{
             sendMessage("§c既に進行中のゲームがあります");
         }
     }
 
     public void finish(){
+        if(!isRunning){
+            sendMessage("§c進行中のゲームがありません");
+            return;
+        }
         sendMessage("....");
         setRunning(false);
         Bukkit.getScheduler().runTaskLater(hit_and_brow,()->{
@@ -119,10 +140,8 @@ public class Game {
             for(CustomColor customColor :correctColors){
                 correctIs.append(customColor.getColorBlock());
             }
+            sendMessage("ゲーム終了！§a"+getTurnPlayer().getPlayer().getName()+"§fの勝ち！");
             sendMessage(correctIs.toString());
-            for(CustomColor customColor : correctColors){
-                sendMessage(customColor.getName());
-            }
             blockManager.openCorrectBlock();
             sendMessage("かかったターン数:§e "+getTurnCount());
         },40L);

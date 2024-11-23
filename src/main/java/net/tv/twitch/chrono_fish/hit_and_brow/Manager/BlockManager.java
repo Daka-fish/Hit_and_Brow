@@ -10,7 +10,7 @@ public class BlockManager {
 
     public BlockManager(Game game){
         this.game=game;
-        this.configManager = new ConfigManager(game.getMain());
+        this.configManager = game.getConfigManager();
     }
 
     public void setBlackBlocks(){

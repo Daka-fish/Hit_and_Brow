@@ -24,7 +24,6 @@ public enum CustomColor {
         this.material = material;
     }
 
-    public String getName() {return name;}
     public String getColorBlock() {return colorBlock;}
     public Material getMaterial() {return material;}
 
@@ -37,14 +36,13 @@ public enum CustomColor {
     }
 
     public static CustomColor getHabColor(Material material){
-        CustomColor target = null;
+        CustomColor target = CustomColor.BLACK;
         for(CustomColor customColor : CustomColor.values()){
             if(material.equals(customColor.getMaterial())){
                 target = customColor;
                 break;
             }
         }
-        if(target == null) target = CustomColor.BLACK;
         return target;
     }
 

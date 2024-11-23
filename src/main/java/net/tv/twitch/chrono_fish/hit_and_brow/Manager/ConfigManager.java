@@ -20,14 +20,14 @@ public class ConfigManager {
         hit_and_brow.saveDefaultConfig();
     }
 
-    public  Location getBaseLocation(){
+    public Location getBaseLocation(){
         return new Location(Bukkit.getWorld("world"),
                 config.getDouble("hab.base-location.x"),
                 config.getDouble("hab.base-location.y"),
                 config.getDouble("hab.base-location.z"));
     }
 
-    public  Location getCorrectLocation(){
+    public Location getCorrectLocation(){
         return new Location(Bukkit.getWorld("world"),
                 config.getDouble("hab.correct-location.x"),
                 config.getDouble("hab.correct-location.y"),

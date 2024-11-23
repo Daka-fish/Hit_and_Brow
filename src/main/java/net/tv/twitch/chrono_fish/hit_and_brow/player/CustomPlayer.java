@@ -1,6 +1,5 @@
 package net.tv.twitch.chrono_fish.hit_and_brow.player;
 
-import net.tv.twitch.chrono_fish.hit_and_brow.Manager.ConfigManager;
 import net.tv.twitch.chrono_fish.hit_and_brow.Manager.CustomBoard;
 import net.tv.twitch.chrono_fish.hit_and_brow.game.Game;
 import net.tv.twitch.chrono_fish.hit_and_brow.CustomColor;
@@ -44,7 +43,7 @@ public class CustomPlayer {
             }
         }
 
-        StringBuilder yourAnswer = new StringBuilder("[ターン"+(game.getTurnCount()+1)+"] 提出した答え：");
+        StringBuilder yourAnswer = new StringBuilder("[ターン"+(game.getTurnCount())+"] 提出した答え：");
         for(int i=0;i<4;i++) {
             yourAnswer.append(playerColor.get(i).getColorBlock());
         }
@@ -55,19 +54,16 @@ public class CustomPlayer {
             return;
         }
 
-        game.setTurnCount(game.getTurnCount()+1);
         game.getParticipants().forEach(habPlayer ->habPlayer.getHabScoreboard().setTurnCount());
 
         player.sendMessage("§e"+hit+"§fヒット、"+"§a"+brow+"§fブロー！");
-        game.setNextPlayer();
-        game.getTurnPlayer().getPlayer().sendMessage("§eあなたのターンです");
     }
 
     public ArrayList<CustomColor> getPlayerColor(){
         int index = 0;
         ArrayList<CustomColor> playerColor = new ArrayList<>();
-        Location baseLoc = new ConfigManager(game.getMain()).getBaseLocation().clone();
-        Location currentLoc = baseLoc.add(2* game.getTurnCount(),0,0);
+        Location baseLoc = game.getConfigManager().getBaseLocation().clone();
+        Location currentLoc = baseLoc.add(2*(game.getTurnCount()-1),0,0);
         for(int i=0; i<4; i++){
             playerColor.add(index, CustomColor.getHabColor(currentLoc.getBlock().getType()));
             index++;

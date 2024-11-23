@@ -27,7 +27,7 @@ public class CommandManager {
                 .clickEvent(ClickEvent.openUrl("https://youtu.be/remMhfUJ630"))
                 .hoverEvent(HoverEvent.showText(Component.text("ルール説明動画を見ます")))
                 .decorate(TextDecoration.UNDERLINED);
-        sender.sendMessage("§e==ヒット&ブローへようこそ==");
+        sender.sendMessage("\n§e==ヒット&ブローへようこそ==");
         sender.sendMessage("§a◆コマンド一覧");
         sender.sendMessage(String.format("%-13s %-25s", "§6/hab help","§f--このプラグインについて説明します"));
         sender.sendMessage(String.format("%-13s %-25s", "§6/hab book","§f--ゲームを管理する本をもらえます"));
@@ -35,7 +35,8 @@ public class CommandManager {
         sender.sendMessage(Component.text("ルールは").append(url).append(Component.text("(YouTubeに飛びます)")));
         sender.sendMessage("\n§a◆ゲームの始め方");
         sender.sendMessage("bookコマンドで管理用の本を取得してください。" +
-                "\n参加しているプレイヤーを確認してゲームを開始してください");
+                "\n参加しているプレイヤーを確認してゲームを開始してください" +
+                "\n§aまたゲーム中は羊毛を直接右クリックすることで、ブロックを入れ替えることができます");
         sender.sendMessage("§e======================");
     }
 
@@ -45,7 +46,7 @@ public class CommandManager {
     }
 
     public void list(){
-        sender.sendMessage("=参加者一覧を表示します=");
+        sender.sendMessage("\n§e=参加者一覧を表示します=");
         for(int i=0; i< game.getParticipants().size(); i++){
             sender.sendMessage("[プレイヤー"+(i+1)+"] "+game.getParticipants().get(i).getPlayer().getName());
         }

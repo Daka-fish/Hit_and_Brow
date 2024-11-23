@@ -18,7 +18,7 @@ public class HabItem {
         bookMeta.setAuthor("UNKNOWN");
 
         Component text = Component.text("");
-        text = text.append(Component.text("\n\n◆参加する"))
+        text = text.append(Component.text("◆参加する"))
                 .hoverEvent(HoverEvent.showText(Component.text("参加するにはここをクリック")))
                 .clickEvent(ClickEvent.runCommand("/hab join"));
         text = text.append(Component.text("\n\n◆観戦者になる")
@@ -33,6 +33,10 @@ public class HabItem {
         text = text.append(Component.text("\n\n◆ゲームを終了する")
                 .hoverEvent(HoverEvent.showText(Component.text("ゲームを終了するにはここをクリック")))
                 .clickEvent(ClickEvent.runCommand("/hab finish")));
+
+        text = text.append(Component.text("\n\n※管理者向け")
+                .hoverEvent(HoverEvent.showText(Component.text(
+                        "ゲーム開始時にコンソールに答えを表示することができます。configファイルのconsole:をtrueに書き換えて再起動してください"))));
 
         bookMeta.addPages(text);
         book.setItemMeta(bookMeta);
