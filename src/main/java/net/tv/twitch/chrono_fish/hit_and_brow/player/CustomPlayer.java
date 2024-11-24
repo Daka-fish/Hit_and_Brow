@@ -2,7 +2,7 @@ package net.tv.twitch.chrono_fish.hit_and_brow.player;
 
 import net.tv.twitch.chrono_fish.hit_and_brow.Manager.CustomBoard;
 import net.tv.twitch.chrono_fish.hit_and_brow.game.Game;
-import net.tv.twitch.chrono_fish.hit_and_brow.CustomColor;
+import net.tv.twitch.chrono_fish.hit_and_brow.game.CustomColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

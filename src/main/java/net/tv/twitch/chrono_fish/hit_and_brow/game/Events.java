@@ -1,6 +1,5 @@
 package net.tv.twitch.chrono_fish.hit_and_brow.game;
 
-import net.tv.twitch.chrono_fish.hit_and_brow.CustomColor;
 import net.tv.twitch.chrono_fish.hit_and_brow.habItem.HabItem;
 import net.tv.twitch.chrono_fish.hit_and_brow.player.CustomPlayer;
 import org.bukkit.Material;

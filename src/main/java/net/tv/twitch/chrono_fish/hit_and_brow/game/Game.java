@@ -1,6 +1,5 @@
 package net.tv.twitch.chrono_fish.hit_and_brow.game;
 
-import net.tv.twitch.chrono_fish.hit_and_brow.CustomColor;
 import net.tv.twitch.chrono_fish.hit_and_brow.Hit_and_Brow;
 import net.tv.twitch.chrono_fish.hit_and_brow.Manager.BlockManager;
 import net.tv.twitch.chrono_fish.hit_and_brow.Manager.ConfigManager;
@@ -80,7 +79,7 @@ public class Game {
             }
             currentPlayer.getInventory().addItem(new ItemStack(Material.BLAZE_ROD,1-getMaterialCount(currentPlayer, Material.BLAZE_ROD)));
             setTurnCount(getTurnCount()+1);
-            currentPlayer.getPlayer().sendMessage("§e\nあなたのターン");
+            sendMessage("[ターン" + getTurnCount() + "] §e" + getTurnPlayer().getPlayer().getName() +"§fのターン");
         }
     }
 
@@ -113,7 +112,7 @@ public class Game {
         if(!isRunning()){
             this.blockManager = new BlockManager(this);
             setRunning(true);
-
+            setTurnCount(0);
             assignColors();
             Collections.shuffle(participants);
 
@@ -121,6 +120,12 @@ public class Game {
             participants.forEach(customPlayer -> customPlayer.getHabScoreboard().resetScoreboard());
 
             sendMessage("§eゲーム開始！");
+            if(configManager.getConsoleToggle()){
+                hit_and_brow.consoleLog("This message is only for admin. If you want to hide this message, edit 'console' section in config.yml 'true' to 'false'");
+                for(CustomColor cc : correctColors){
+                    hit_and_brow.consoleLog(cc.getName());
+                }
+            }
             setNextPlayer();
         }else{
             sendMessage("§c既に進行中のゲームがあります");

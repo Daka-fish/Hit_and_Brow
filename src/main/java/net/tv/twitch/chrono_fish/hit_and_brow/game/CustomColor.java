@@ -1,4 +1,4 @@
-package net.tv.twitch.chrono_fish.hit_and_brow;
+package net.tv.twitch.chrono_fish.hit_and_brow.game;
 
 import org.bukkit.Material;
 
@@ -24,6 +24,7 @@ public enum CustomColor {
         this.material = material;
     }
 
+    public String getName() {return name;}
     public String getColorBlock() {return colorBlock;}
     public Material getMaterial() {return material;}
 

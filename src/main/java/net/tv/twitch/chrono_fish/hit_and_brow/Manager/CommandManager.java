@@ -13,12 +13,10 @@ import org.bukkit.scoreboard.DisplaySlot;
 public class CommandManager {
 
     private final Player sender;
-    private final String[] args;
     private final Game game;
 
-    public CommandManager(Player sender, String[] args, Game game){
+    public CommandManager(Player sender, Game game){
         this.sender = sender;
-        this.args = args;
         this.game = game;
     }
 
@@ -78,7 +76,7 @@ public class CommandManager {
 
     public void start(){
         if(game.getParticipants().size() == 0){
-            sender.sendMessage("§c参加しているプレイヤーがいません");
+            sender.sendMessage("§c参加しているプレイヤーがいないため、ゲームを開始できません");
             return;
         }
         game.start();

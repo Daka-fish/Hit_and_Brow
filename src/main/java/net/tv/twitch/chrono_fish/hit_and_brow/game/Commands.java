@@ -22,7 +22,7 @@ public class Commands implements CommandExecutor {
             Player snd = (Player) sender;
             if(command.getName().equalsIgnoreCase("hab")){
                 if(args.length > 0){
-                    CommandManager commandManager = new CommandManager(snd,args,hit_and_brow.getHabGame());
+                    CommandManager commandManager = new CommandManager(snd,hit_and_brow.getHabGame());
                     switch(args[0]){
                         case "start":
                             commandManager.start();

@@ -7,3 +7,4 @@ hab:
     x: 15
     y: 21
     z: 13
+  console: false

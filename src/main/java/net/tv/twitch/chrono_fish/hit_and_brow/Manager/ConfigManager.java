@@ -33,4 +33,8 @@ public class ConfigManager {
                 config.getDouble("hab.correct-location.y"),
                 config.getDouble("hab.correct-location.z"));
     }
+
+    public boolean getConsoleToggle(){
+        return config.getBoolean("hab.console");
+    }
 }
