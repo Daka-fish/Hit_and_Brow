@@ -59,7 +59,7 @@ public class CustomBoard {
         }
         correctColor = str.toString();
         scoreboard.resetScores(turnCount);
-        turnCount = " └  "+ "§e"+ 0;
+        turnCount = " └  "+ "§e"+ 1;
 
         obj.getScore(correctColor).setScore(-2);
         obj.getScore(turnCount).setScore(-5);

@@ -54,8 +54,6 @@ public class CustomPlayer {
             return;
         }
 
-        game.getParticipants().forEach(habPlayer ->habPlayer.getHabScoreboard().setTurnCount());
-
         player.sendMessage("§e"+hit+"§fヒット、"+"§a"+brow+"§fブロー！");
     }
 

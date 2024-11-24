@@ -78,8 +78,6 @@ public class Game {
                 currentPlayer.getInventory().addItem(new ItemStack(cc.getMaterial(),4-getMaterialCount(currentPlayer, cc.getMaterial())));
             }
             currentPlayer.getInventory().addItem(new ItemStack(Material.BLAZE_ROD,1-getMaterialCount(currentPlayer, Material.BLAZE_ROD)));
-            setTurnCount(getTurnCount()+1);
-            sendMessage("[ターン" + getTurnCount() + "] §e" + getTurnPlayer().getPlayer().getName() +"§fのターン");
         }
     }
 
@@ -117,7 +115,6 @@ public class Game {
             Collections.shuffle(participants);
 
             blockManager.setBlackBlocks();
-            participants.forEach(customPlayer -> customPlayer.getHabScoreboard().resetScoreboard());
 
             sendMessage("§eゲーム開始！");
             if(configManager.getConsoleToggle()){
@@ -127,16 +124,14 @@ public class Game {
                 }
             }
             setNextPlayer();
-        }else{
-            sendMessage("§c既に進行中のゲームがあります");
+            setTurnCount(getTurnCount()+1);
+            sendMessage("[ターン" + getTurnCount() + "] §e" + getTurnPlayer().getPlayer().getName() +"§fのターン");
+            participants.forEach(customPlayer -> customPlayer.getHabScoreboard().resetScoreboard());
         }
     }
 
     public void finish(){
-        if(!isRunning){
-            sendMessage("§c進行中のゲームがありません");
-            return;
-        }
+        if(!isRunning) return;
         sendMessage("....");
         setRunning(false);
         Bukkit.getScheduler().runTaskLater(hit_and_brow,()->{

@@ -82,5 +82,11 @@ public class CommandManager {
         game.start();
     }
 
-    public void finish(){game.finish();}
+    public void finish(){
+        if(game.getParticipants().size() == 0){
+            sender.sendMessage("§c進行中のゲームがありません");
+            return;
+        }
+        game.finish();
+    }
 }

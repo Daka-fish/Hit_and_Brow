@@ -25,6 +25,8 @@ public class Events implements Listener {
                     if(game.getTurnPlayer().equals(customPlayer)){
                         customPlayer.submitColors();
                         game.setNextPlayer();
+                        game.setTurnCount(game.getTurnCount()+1);
+                        game.getParticipants().forEach(habPlayer ->habPlayer.getHabScoreboard().setTurnCount());
                     }else{
                         e.getPlayer().sendMessage("§cあなたのターンではありません");
                     }
