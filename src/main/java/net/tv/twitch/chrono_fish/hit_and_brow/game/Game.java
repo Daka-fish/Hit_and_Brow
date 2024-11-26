@@ -3,6 +3,7 @@ package net.tv.twitch.chrono_fish.hit_and_brow.game;
 import net.tv.twitch.chrono_fish.hit_and_brow.Hit_and_Brow;
 import net.tv.twitch.chrono_fish.hit_and_brow.Manager.BlockManager;
 import net.tv.twitch.chrono_fish.hit_and_brow.Manager.ConfigManager;
+import net.tv.twitch.chrono_fish.hit_and_brow.habItem.HabItem;
 import net.tv.twitch.chrono_fish.hit_and_brow.player.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -77,7 +78,7 @@ public class Game {
                 if(cc.equals(CustomColor.BLACK)) continue;
                 currentPlayer.getInventory().addItem(new ItemStack(cc.getMaterial(),4-getMaterialCount(currentPlayer, cc.getMaterial())));
             }
-            currentPlayer.getInventory().addItem(new ItemStack(Material.BLAZE_ROD,1-getMaterialCount(currentPlayer, Material.BLAZE_ROD)));
+            currentPlayer.getInventory().addItem(HabItem.HAB_BLAZE_ROD());
         }
     }
 

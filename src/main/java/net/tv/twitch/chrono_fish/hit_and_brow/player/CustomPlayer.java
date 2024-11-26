@@ -3,6 +3,7 @@ package net.tv.twitch.chrono_fish.hit_and_brow.player;
 import net.tv.twitch.chrono_fish.hit_and_brow.Manager.CustomBoard;
 import net.tv.twitch.chrono_fish.hit_and_brow.game.Game;
 import net.tv.twitch.chrono_fish.hit_and_brow.game.CustomColor;
+import net.tv.twitch.chrono_fish.hit_and_brow.habItem.HabItem;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -48,7 +49,7 @@ public class CustomPlayer {
             yourAnswer.append(playerColor.get(i).getColorBlock());
         }
         player.sendMessage(yourAnswer.toString());
-
+        if(player.getInventory().contains(HabItem.HAB_BLAZE_ROD())) player.getInventory().remove(HabItem.HAB_BLAZE_ROD());
         if(hit == 4){
             game.finish();
             return;
