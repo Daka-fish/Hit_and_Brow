@@ -11,7 +11,8 @@
 > 引用元：https://youtu.be/remMhfUJ630
 
 ## プレイ動画
-> 準備中
+[![プレー動画](https://img.youtube.com/vi/wwt6kfCjZOs/0.jpg)](https://www.youtube.com/watch?v=wwt6kfCjZOs)
+> 引用元；https://youtu.be/wwt6kfCjZOs
 
 ### 参考
 ヒット&ブロー (Nintendo Switch『世界のアソビ大全51』)  
