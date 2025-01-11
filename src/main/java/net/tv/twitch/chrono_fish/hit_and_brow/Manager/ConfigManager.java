@@ -1,6 +1,6 @@
 package net.tv.twitch.chrono_fish.hit_and_brow.Manager;
 
-import net.tv.twitch.chrono_fish.hit_and_brow.Hit_and_Brow;
+import net.tv.twitch.chrono_fish.hit_and_brow.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -11,13 +11,13 @@ public class ConfigManager {
 
     private final FileConfiguration config;
 
-    public ConfigManager(Hit_and_Brow hit_and_brow){
-        File configFile = new File(hit_and_brow.getDataFolder(), "config.yml");
+    public ConfigManager(Main main){
+        File configFile = new File(main.getDataFolder(), "config.yml");
         if(!configFile.exists()){
-            hit_and_brow.saveDefaultConfig();
+            main.saveDefaultConfig();
         }
-        config = hit_and_brow.getConfig();
-        hit_and_brow.saveDefaultConfig();
+        config = main.getConfig();
+        main.saveDefaultConfig();
     }
 
     public Location getBaseLocation(){

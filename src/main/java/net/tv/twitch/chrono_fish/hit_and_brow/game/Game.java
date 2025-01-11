@@ -1,10 +1,9 @@
 package net.tv.twitch.chrono_fish.hit_and_brow.game;
 
-import net.tv.twitch.chrono_fish.hit_and_brow.Hit_and_Brow;
+import net.tv.twitch.chrono_fish.hit_and_brow.Main;
 import net.tv.twitch.chrono_fish.hit_and_brow.Manager.BlockManager;
 import net.tv.twitch.chrono_fish.hit_and_brow.Manager.ConfigManager;
 import net.tv.twitch.chrono_fish.hit_and_brow.habItem.HabItem;
-import net.tv.twitch.chrono_fish.hit_and_brow.player.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -15,7 +14,7 @@ import java.util.Collections;
 
 public class Game {
 
-    private final Hit_and_Brow hit_and_brow;
+    private final Main main;
 
     private final ArrayList<CustomPlayer> participants;
     private final ArrayList<CustomColor> correctColors;
@@ -29,13 +28,13 @@ public class Game {
 
     private BlockManager blockManager;
 
-    public Game(Hit_and_Brow hit_and_brow){
-        this.hit_and_brow = hit_and_brow;
+    public Game(Main main){
+        this.main = main;
         this.participants = new ArrayList<>(2);
         this.correctColors = new ArrayList<>(4);
         this.isRunning = false;
         this.turnCount = 0;
-        this.configManager = new ConfigManager(hit_and_brow);
+        this.configManager = new ConfigManager(main);
     }
 
     public ArrayList<CustomPlayer> getParticipants() {return participants;}
@@ -119,9 +118,9 @@ public class Game {
 
             sendMessage("§eゲーム開始！");
             if(configManager.getConsoleToggle()){
-                hit_and_brow.consoleLog("This message is only for admin. If you want to hide this message, edit 'console' section in config.yml 'true' to 'false'");
+                main.consoleLog("This message is only for admin. If you want to hide this message, edit 'console' section in config.yml 'true' to 'false'");
                 for(CustomColor cc : correctColors){
-                    hit_and_brow.consoleLog(cc.getName());
+                    main.consoleLog(cc.getName());
                 }
             }
             setNextPlayer();
@@ -135,7 +134,7 @@ public class Game {
         if(!isRunning) return;
         sendMessage("....");
         setRunning(false);
-        Bukkit.getScheduler().runTaskLater(hit_and_brow,()->{
+        Bukkit.getScheduler().runTaskLater(main,()->{
             participants.forEach(customPlayer -> customPlayer.getHabScoreboard().setCorrectColor());
             StringBuilder correctIs = new StringBuilder("正解は、");
             for(CustomColor customColor :correctColors){

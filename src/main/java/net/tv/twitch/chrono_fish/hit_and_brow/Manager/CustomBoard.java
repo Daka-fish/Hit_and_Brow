@@ -3,7 +3,7 @@ package net.tv.twitch.chrono_fish.hit_and_brow.Manager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.tv.twitch.chrono_fish.hit_and_brow.game.CustomColor;
-import net.tv.twitch.chrono_fish.hit_and_brow.player.CustomPlayer;
+import net.tv.twitch.chrono_fish.hit_and_brow.game.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.*;
 

@@ -6,7 +6,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.tv.twitch.chrono_fish.hit_and_brow.game.Game;
 import net.tv.twitch.chrono_fish.hit_and_brow.habItem.HabItem;
-import net.tv.twitch.chrono_fish.hit_and_brow.player.CustomPlayer;
+import net.tv.twitch.chrono_fish.hit_and_brow.game.CustomPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 

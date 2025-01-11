@@ -1,6 +1,5 @@
-package net.tv.twitch.chrono_fish.hit_and_brow.game;
+package net.tv.twitch.chrono_fish.hit_and_brow;
 
-import net.tv.twitch.chrono_fish.hit_and_brow.Hit_and_Brow;
 import net.tv.twitch.chrono_fish.hit_and_brow.Manager.CommandManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,10 +9,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class Commands implements CommandExecutor {
 
-    private final Hit_and_Brow hit_and_brow;
+    private final Main main;
 
-    public Commands(Hit_and_Brow hit_and_brow){
-        this.hit_and_brow = hit_and_brow;
+    public Commands(Main main){
+        this.main = main;
     }
 
     @Override
@@ -22,7 +21,7 @@ public class Commands implements CommandExecutor {
             Player snd = (Player) sender;
             if(command.getName().equalsIgnoreCase("hab")){
                 if(args.length > 0){
-                    CommandManager commandManager = new CommandManager(snd,hit_and_brow.getHabGame());
+                    CommandManager commandManager = new CommandManager(snd, main.getHabGame());
                     switch(args[0]){
                         case "start":
                             commandManager.start();
