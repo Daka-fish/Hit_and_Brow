@@ -1,15 +1,14 @@
-package net.tv.twitch.chrono_fish.hit_and_brow.Manager;
+package net.tv.twitch.chrono_fish.hit_and_brow.game;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.tv.twitch.chrono_fish.hit_and_brow.game.CustomColor;
-import net.tv.twitch.chrono_fish.hit_and_brow.game.CustomPlayer;
+import net.tv.twitch.chrono_fish.hit_and_brow.instance.GameColor;
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.*;
 
 public class CustomBoard {
 
-    private final CustomPlayer customPlayer;
+    private final GamePlayer gamePlayer;
 
     private final Scoreboard scoreboard;
     private final Objective obj;
@@ -17,8 +16,8 @@ public class CustomBoard {
     private String correctColor;
     private String turnCount;
 
-    public CustomBoard(CustomPlayer customPlayer){
-        this.customPlayer = customPlayer;
+    public CustomBoard(GamePlayer gamePlayer){
+        this.gamePlayer = gamePlayer;
         this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         this.obj = scoreboard.registerNewObjective("sidebar", Criteria.DUMMY, Component.text("-info-").decorate(TextDecoration.BOLD));
         this.obj.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -38,8 +37,8 @@ public class CustomBoard {
     public void setCorrectColor(){
         scoreboard.resetScores(correctColor);
         StringBuilder str = new StringBuilder(" └  ");
-        for(CustomColor customColor : customPlayer.getGame().getCorrectColors()){
-            str.append(customColor.getColorBlock());
+        for(GameColor gameColor : gamePlayer.getGame().getCorrectColors()){
+            str.append(gameColor.getColorBlock());
         }
         correctColor = str.toString();
         obj.getScore(correctColor).setScore(-2);
@@ -47,7 +46,7 @@ public class CustomBoard {
 
     public void setTurnCount(){
         scoreboard.resetScores(turnCount);
-        turnCount = " └  "+ "§e"+ customPlayer.getGame().getTurnCount();
+        turnCount = " └  "+ "§e"+ gamePlayer.getGame().getTurnCount();
         obj.getScore(turnCount).setScore(-5);
     }
 
@@ -55,7 +54,7 @@ public class CustomBoard {
         scoreboard.resetScores(correctColor);
         StringBuilder str = new StringBuilder(" └  ");
         for(int i=0; i<4; i++){
-            str.append(CustomColor.BLACK.getColorBlock());
+            str.append(GameColor.BLACK.getColorBlock());
         }
         correctColor = str.toString();
         scoreboard.resetScores(turnCount);

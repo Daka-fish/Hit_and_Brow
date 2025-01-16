@@ -1,6 +1,8 @@
-package net.tv.twitch.chrono_fish.hit_and_brow;
+package net.tv.twitch.chrono_fish.hit_and_brow.command;
 
-import net.tv.twitch.chrono_fish.hit_and_brow.Manager.CommandManager;
+import net.tv.twitch.chrono_fish.hit_and_brow.Main;
+import net.tv.twitch.chrono_fish.hit_and_brow.game.Game;
+import net.tv.twitch.chrono_fish.hit_and_brow.game.GamePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -9,10 +11,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class Commands implements CommandExecutor {
 
-    private final Main main;
+    private final Game game;
 
     public Commands(Main main){
-        this.main = main;
+        this.game = main.getGame();
     }
 
     @Override
@@ -21,34 +23,26 @@ public class Commands implements CommandExecutor {
             Player snd = (Player) sender;
             if(command.getName().equalsIgnoreCase("hab")){
                 if(args.length > 0){
-                    CommandManager commandManager = new CommandManager(snd, main.getHabGame());
+                    GamePlayer gamePlayer = game.getGamePlayer(snd);
+                    if (gamePlayer==null) return false;
                     switch(args[0]){
                         case "start":
-                            commandManager.start();
+                            game.start(gamePlayer);
                             break;
 
                         case "finish":
-                            commandManager.finish();
-                            break;
-
-                        case "join":
-                            commandManager.join();
-                            break;
-
-                        case "leave":
-                            commandManager.leave();
+                            game.finish(gamePlayer);
                             break;
 
                         case "list":
-                            commandManager.list();
-                            break;
-
-                        case "book":
-                            commandManager.book();
+                            gamePlayer.sendMessage("[参加者]");
+                            int index = 1;
+                            for (GamePlayer participant : game.getParticipants()) {
+                                gamePlayer.sendMessage(index+": "+participant.getName());
+                            }
                             break;
 
                         case "help":
-                            commandManager.help();
                             break;
 
                         default:

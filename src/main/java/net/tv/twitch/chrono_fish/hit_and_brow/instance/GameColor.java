@@ -1,10 +1,10 @@
-package net.tv.twitch.chrono_fish.hit_and_brow.game;
+package net.tv.twitch.chrono_fish.hit_and_brow.instance;
 
 import org.bukkit.Material;
 
 import java.util.ArrayList;
 
-public enum CustomColor {
+public enum GameColor {
 
     BLACK("Black","§0■",Material.BLACK_WOOL),
     WHITE("White","§f■",Material.WHITE_WOOL),
@@ -18,7 +18,7 @@ public enum CustomColor {
     private final String colorBlock;
     private final Material material;
 
-    CustomColor(String name, String colorBlock, Material material){
+    GameColor(String name, String colorBlock, Material material){
         this.name = name;
         this.colorBlock = colorBlock;
         this.material = material;
@@ -30,17 +30,17 @@ public enum CustomColor {
 
     public static ArrayList<Material> getMaterials(){
         ArrayList<Material> materials = new ArrayList<>();
-        for(CustomColor customColor : CustomColor.values()){
-            materials.add(customColor.getMaterial());
+        for(GameColor gameColor : GameColor.values()){
+            materials.add(gameColor.getMaterial());
         }
         return materials;
     }
 
-    public static CustomColor getHabColor(Material material){
-        CustomColor target = CustomColor.BLACK;
-        for(CustomColor customColor : CustomColor.values()){
-            if(material.equals(customColor.getMaterial())){
-                target = customColor;
+    public static GameColor getHabColor(Material material){
+        GameColor target = GameColor.BLACK;
+        for(GameColor gameColor : GameColor.values()){
+            if(material.equals(gameColor.getMaterial())){
+                target = gameColor;
                 break;
             }
         }

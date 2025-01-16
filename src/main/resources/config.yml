@@ -1,10 +1,15 @@
 hab:
   base-location:
-    x: -15
+    x: -13
     y: 21
     z: 13
   correct-location:
-    x: 15
+    x: 13
     y: 21
     z: 13
-  console: false
+
+game:
+  max-turn-count: 10
+  max-player-size: 10
+  mode: "NORMAL"
+  color-repeat: true
