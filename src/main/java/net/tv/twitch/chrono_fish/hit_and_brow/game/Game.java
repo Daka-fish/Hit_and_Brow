@@ -92,13 +92,13 @@ public class Game {
 
     public void setNextPlayer(){
         if(isRunning){
-            if(getTurnCount()==0){
+            if(getTurnCount()==1){
                 setTurnPlayer(participants.get(0));
             }else{
                 int index = (participants.indexOf(getTurnPlayer()) + 1) % participants.size();
                 setTurnPlayer(participants.get(index));
             }
-            Player currentPlayer = getTurnPlayer().getPlayer();
+            Player currentPlayer = turnPlayer.getPlayer();
             for(GameColor cc: GameColor.values()){
                 if(cc.equals(GameColor.BLACK)) continue;
                 currentPlayer.getInventory().addItem(new ItemStack(cc.getMaterial(),4-getMaterialCount(currentPlayer, cc.getMaterial())));
@@ -133,19 +133,16 @@ public class Game {
     }
 
     public void start(GamePlayer gamePlayer){
-        if(!isRunning()){
+        if(!isRunning){
             if(participants.size()>0){
                 isRunning = true;
-                turnCount = 0;
-                assignColors();
+                turnCount = 1;
                 Collections.shuffle(participants);
-
+                assignColors();
                 setBlackBlocks();
-
                 broadCastMessage("§eゲーム開始！");
                 setNextPlayer();
-                setTurnCount(turnCount+1);
-                broadCastMessage("[ターン" + getTurnCount() + "] §e" + getTurnPlayer().getName() +"§fのターン");
+                broadCastMessage("[ターン" + turnCount + "] §e" + turnPlayer.getName() +"§fのターン");
                 participants.forEach(participant -> participant.getHabScoreboard().resetScoreboard());
             }
         }else{
@@ -163,10 +160,10 @@ public class Game {
                 for(GameColor gameColor :correctColors){
                     correct_is.append(gameColor.getColorBlock());
                 }
-                broadCastMessage("ゲーム終了！§a"+getTurnPlayer().getName()+"§fの勝ち！");
+                broadCastMessage("ゲーム終了！§a"+turnPlayer.getName()+"§fの勝ち！");
                 broadCastMessage(correct_is.toString());
                 openCorrectBlock();
-                broadCastMessage("かかったターン数:§e "+getTurnCount());
+                broadCastMessage("かかったターン数:§e "+turnCount);
             },40L);
         }else{
             gamePlayer.sendActionBar("§c進行中のゲームがありません");
