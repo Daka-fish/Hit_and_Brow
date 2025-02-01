@@ -41,15 +41,22 @@ public class ConfigManager {
         try{
             return GameMode.valueOf(config.getString("game.mode"));
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
+            config.set("game.mode","NORMAL");
+            return GameMode.NORMAL;
         }
     }
+
+    private void setGameMode() {config.set("game.mode",game.getGameMode().name());}
 
     private int get_max_turn() {return config.getInt("game.max-turn-count");}
 
     private int get_max_player_size() {return config.getInt("game.max-player-size");}
 
-    private boolean get_is_color_repeat() {return config.getBoolean("game.color-repeat");}
+    private boolean get_is_color_repeat() {
+        return config.getBoolean("game.color-repeat", false);
+    }
+
+    private void set_is_color_repeat() {config.set("game.color-repeat",game.isColor_repeat());}
 
     public void loadOptions() {
         game.setGameMode(getGameMode());
@@ -60,5 +67,9 @@ public class ConfigManager {
         game.setColor_repeat(get_is_color_repeat());
     }
 
-    public void saveOptions() {}
+    public void saveOptions() {
+        setGameMode();
+        set_is_color_repeat();
+        game.getMain().saveConfig();
+    }
 }

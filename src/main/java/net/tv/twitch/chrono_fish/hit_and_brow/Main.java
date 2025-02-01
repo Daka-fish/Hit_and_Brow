@@ -29,5 +29,4 @@ public final class Main extends JavaPlugin {
     }
 
     public Game getGame() {return game;}
-    public ConfigManager getConfigManager() {return configManager;}
 }

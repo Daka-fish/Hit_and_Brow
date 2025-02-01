@@ -36,6 +36,8 @@ public class Game {
         this.isRunning = false;
     }
 
+    public Main getMain() {return main;}
+
     public ArrayList<GamePlayer> getParticipants() {return participants;}
     public ArrayList<GameColor> getCorrectColors() {return correctColors;}
 
@@ -186,8 +188,7 @@ public class Game {
                     brow ++;
                 }
             }
-            broadCastMessage(message.toString());
-            broadCastMessage("§a"+hit+"§fヒット、"+"§e"+brow+"§fブロー！");
+            broadCastMessage(message+" §a"+hit+"§fヒット、"+"§e"+brow+"§fブロー！");
             return hit == 4 && brow == 0;
         }
         return false;
