@@ -15,23 +15,15 @@ public class GamePlayer {
     private final Player player;
     private final String name;
 
-    private final CustomBoard customBoard;
-
     public GamePlayer(Game game, Player player){
         this.game = game;
         this.player = player;
         this.name = player.getName();
-        this.customBoard = new CustomBoard(this);
-        player.setScoreboard(customBoard.getScoreboard());
     }
-
-    public Game getGame() {return game;}
 
     public Player getPlayer() {return player;}
 
     public String getName() {return name;}
-
-    public CustomBoard getHabScoreboard() {return customBoard;}
 
     public void sendMessage(String message) {if(player != null) player.sendMessage(message);}
 
@@ -53,4 +45,6 @@ public class GamePlayer {
         }
         return playerColor;
     }
+
+    public void setScoreBoard(CustomSidebar customSidebar) {if(player!=null) player.setScoreboard(customSidebar.getScoreboard());}
 }

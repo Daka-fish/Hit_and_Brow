@@ -44,6 +44,7 @@ public class Commands implements CommandExecutor {
                             break;
 
                         case "help":
+                            //ゲームについて説明する。最後に各モードについての説明はこちらのリンクを送る
                             break;
 
                         case "setting":

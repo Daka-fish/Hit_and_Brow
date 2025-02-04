@@ -29,11 +29,16 @@ public class Game {
     private int max_turn;
     private boolean color_repeat;
 
+    private CustomSidebar sidebar;
+
     public Game(Main main){
         this.main = main;
         this.participants = new ArrayList<>(2);
         this.correctColors = new ArrayList<>(4);
         this.isRunning = false;
+        this.turnCount = 0;
+
+        this.sidebar = new CustomSidebar();
     }
 
     public Main getMain() {return main;}
@@ -44,13 +49,19 @@ public class Game {
     public boolean isRunning() {return isRunning;}
 
     public int getTurnCount() {return turnCount;}
-    public void setTurnCount(int turnCount) {this.turnCount = turnCount;}
+    public void setTurnCount(int turnCount) {
+        this.turnCount = turnCount;
+        sidebar.resetTurnScore(turnCount);
+    }
 
     public GamePlayer getTurnPlayer() {return turnPlayer;}
     public void setTurnPlayer(GamePlayer turnPlayer) {this.turnPlayer = turnPlayer;}
 
     public GameMode getGameMode() {return gameMode;}
-    public void setGameMode(GameMode gameMode) {this.gameMode = gameMode;}
+    public void setGameMode(GameMode gameMode) {
+        this.gameMode = gameMode;
+        sidebar.resetModeScore(gameMode);
+    }
 
     public Location getBaseLocation() {return baseLocation;}
     public void setBaseLocation(Location baseLocation) {this.baseLocation = baseLocation;}
@@ -69,6 +80,8 @@ public class Game {
     public boolean isColor_repeat() {return color_repeat;}
     public void setColor_repeat(boolean color_repeat) {this.color_repeat = color_repeat;}
 
+    public CustomSidebar getSidebar() {return sidebar;}
+
     public GamePlayer getGamePlayer(Player player){
         for(GamePlayer gamePlayer : participants){
             if(gamePlayer.getPlayer().equals(player)) return gamePlayer;
@@ -80,6 +93,7 @@ public class Game {
         if (!participants.contains(gamePlayer)){
             participants.add(gamePlayer);
             broadCastMessage("§e"+gamePlayer.getName()+"§fがゲームに参加しました");
+            gamePlayer.setScoreBoard(sidebar);
         }
     }
 
@@ -119,7 +133,7 @@ public class Game {
         return count;
     }
 
-    public void assignColors(){
+    private void assignColors(){
         correctColors.clear();
         ArrayList<GameColor> colorPool = new ArrayList<>(6);
         colorPool.add(GameColor.RED);
@@ -138,14 +152,25 @@ public class Game {
         if(!isRunning){
             if(participants.size()>0){
                 isRunning = true;
-                turnCount = 1;
+                setTurnCount(1);
                 Collections.shuffle(participants);
                 assignColors();
                 setBlackBlocks();
-                broadCastMessage("§eゲーム開始！");
                 setNextPlayer();
                 broadCastMessage("[ターン" + turnCount + "] §e" + turnPlayer.getName() +"§fのターン");
-                participants.forEach(participant -> participant.getHabScoreboard().resetScoreboard());
+                sidebar.hideCorrectScore();
+                switch(gameMode){
+                    case NORMAL:
+                        break;
+
+                    case SPEED:
+                        speed();
+                        break;
+
+                    case PRACTICE:
+                        practice();
+                        break;
+                }
             }
         }else{
             gamePlayer.sendActionBar("§c既にゲームが進行中です");
@@ -157,7 +182,6 @@ public class Game {
             broadCastMessage("....");
             isRunning = false;
             Bukkit.getScheduler().runTaskLater(main,()->{
-                participants.forEach(participant -> participant.getHabScoreboard().setCorrectColor());
                 StringBuilder correct_is = new StringBuilder("正解は、");
                 for(GameColor gameColor :correctColors){
                     correct_is.append(gameColor.getColorBlock());
@@ -166,6 +190,7 @@ public class Game {
                 broadCastMessage(correct_is.toString());
                 openCorrectBlock();
                 broadCastMessage("かかったターン数:§e "+turnCount);
+                sidebar.setCorrectScore(correctColors);
             },40L);
         }else{
             gamePlayer.sendActionBar("§c進行中のゲームがありません");
@@ -174,7 +199,7 @@ public class Game {
 
     public boolean checkColor(ArrayList<GameColor> colors) {
         if(colors.size()==4){
-            StringBuilder message = new StringBuilder("[ターン§e"+turnCount+"§f] ");
+            StringBuilder message = new StringBuilder("[ターン"+turnCount+"§f] ");
             int hit = 0;
             int brow = 0;
 
@@ -221,5 +246,13 @@ public class Game {
             }
             correctLoc.add(0,0,1);
         }
+    }
+
+    private void practice(){
+        broadCastMessage("プラクティスモードではHit&Browの遊び方についてご説明します");
+    }
+
+    private void speed(){
+        broadCastMessage("スピードモードスタート！");
     }
 }

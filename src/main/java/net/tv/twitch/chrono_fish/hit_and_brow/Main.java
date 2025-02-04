@@ -21,6 +21,8 @@ public final class Main extends JavaPlugin {
         configManager.loadOptions();
         Objects.requireNonNull(getCommand("hab")).setExecutor(new Commands(this));
         Bukkit.getPluginManager().registerEvents(new Events(game),this);
+
+        game.getSidebar().resetModeScore(game.getGameMode());
     }
 
     @Override
