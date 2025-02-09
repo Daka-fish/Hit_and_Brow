@@ -15,14 +15,16 @@ public class Commands implements CommandExecutor {
 
     private final Game game;
 
-    public Commands(Main main){
-        this.game = main.getGame();
-    }
+    public Commands(Main main){this.game = main.getGame();}
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
         if(sender instanceof Player){
             Player snd = (Player) sender;
+            if(!snd.hasPermission("hab.op")){
+                snd.sendMessage("§c権限がありません");
+                return false;
+            }
             if(command.getName().equalsIgnoreCase("hab")){
                 if(args.length > 0){
                     switch(args[0]){
