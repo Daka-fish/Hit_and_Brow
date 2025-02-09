@@ -2,9 +2,8 @@ package net.tv.twitch.chrono_fish.hit_and_brow.instance;
 
 public enum GameMode {
 
-    NORMAL("ノーマル"),
-    PRACTICE("プラクティス"),
-    SPEED("スピード");
+    NORMAL("§eノーマル"),
+    SPEED("§aスピード");
 
     private final String mode_name;
 

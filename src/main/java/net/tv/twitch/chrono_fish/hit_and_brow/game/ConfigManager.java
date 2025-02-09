@@ -7,6 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConfigManager {
 
@@ -52,23 +54,34 @@ public class ConfigManager {
 
     private int get_max_player_size() {return config.getInt("game.max-player-size");}
 
-    private boolean get_is_color_repeat() {
-        return config.getBoolean("game.color-repeat", false);
-    }
+    private boolean get_is_color_repeat() {return config.getBoolean("game.color-repeat", false);}
 
-    private void set_is_color_repeat() {config.set("game.color-repeat",game.isColor_repeat());}
+    private void set_is_color_repeat() {config.set("game.color-repeat",game.isColorRepeat());}
+
+    private int getSpeedModeTimerSeconds() {return config.getInt("game.speed-mode-seconds");}
+    private void setSpeedModeTimerSeconds() {config.set("game.speed-mode-seconds", game.getSpeedModeSeconds());}
+
+    public List<String> getLastParticipants() {return config.getStringList("last-participants");}
+    public void saveParticipants() {
+        List<String> participantsNames = new ArrayList<>();
+        for(GamePlayer participant : game.getParticipants()) participantsNames.add(participant.getPlayerName());
+        config.set("last-participants",participantsNames);
+        game.getMain().saveConfig();
+    }
 
     public void loadOptions() {
         game.setGameMode(getGameMode());
         game.setBaseLocation(getBaseLocation());
         game.setCorrectLocation(getCorrectLocation());
-        game.setMax_turn(get_max_turn());
-        game.setMax_player_size(get_max_player_size());
-        game.setColor_repeat(get_is_color_repeat());
+        game.setMaxTurn(get_max_turn());
+        game.setMaxPlayerSize(get_max_player_size());
+        game.setColorRepeat(get_is_color_repeat());
+        game.setSpeedModeSeconds(getSpeedModeTimerSeconds());
     }
 
     public void saveOptions() {
         setGameMode();
+        setSpeedModeTimerSeconds();
         set_is_color_repeat();
         game.getMain().saveConfig();
     }

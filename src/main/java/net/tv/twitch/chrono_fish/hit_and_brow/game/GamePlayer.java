@@ -2,6 +2,9 @@ package net.tv.twitch.chrono_fish.hit_and_brow.game;
 
 import net.kyori.adventure.text.Component;
 import net.tv.twitch.chrono_fish.hit_and_brow.instance.GameColor;
+import net.tv.twitch.chrono_fish.hit_and_brow.instance.GameMode;
+import net.tv.twitch.chrono_fish.hit_and_brow.speed.CustomBossBar;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,25 +16,41 @@ public class GamePlayer {
     private final Game game;
 
     private final Player player;
-    private final String name;
+    private final String playerName;
 
     public GamePlayer(Game game, Player player){
         this.game = game;
         this.player = player;
-        this.name = player.getName();
+        this.playerName = player.getName();
     }
 
     public Player getPlayer() {return player;}
 
-    public String getName() {return name;}
+    public String getPlayerName() {return playerName;}
 
     public void sendMessage(String message) {if(player != null) player.sendMessage(message);}
 
     public void sendActionBar(String message) {if(player != null) player.sendActionBar(Component.text(message));}
 
     public void submitColors(){
-        if(player.getInventory().contains(Material.BLAZE_ROD)) player.getInventory().remove(Material.BLAZE_ROD);
-        if(game.checkColor(getPlayerColor())) game.finish(this);
+        if(game.getTurnPlayer().equals(this)){
+            if(game.getGameMode().equals(GameMode.SPEED)) {
+                game.getCustomBossBar().setProgress(0);
+                game.cancelTimer();
+            }
+            if(player.getInventory().contains(Material.BLAZE_ROD)) player.getInventory().remove(Material.BLAZE_ROD);
+            if(game.checkColor(getPlayerColor())) game.finish(player);
+            if(game.isRunning()) {
+                if(game.getTurnCount()==game.getMaxTurn() && !game.getGameMode().equals(GameMode.SPEED)){
+                    game.draw();
+                    return;
+                }
+                game.setNextPlayer();
+                game.setTurnCount(game.getTurnCount()+1);
+            }
+        }else{
+            sendActionBar("§cあなたのターンではありません");
+        }
     }
 
     public ArrayList<GameColor> getPlayerColor(){
@@ -46,5 +65,9 @@ public class GamePlayer {
         return playerColor;
     }
 
-    public void setScoreBoard(CustomSidebar customSidebar) {if(player!=null) player.setScoreboard(customSidebar.getScoreboard());}
+    public void setSidebar(CustomSidebar customSidebar) {if(player!=null) player.setScoreboard(customSidebar.getScoreboard());}
+    public void setEmptySidebar() {if(player!=null) player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());}
+
+    public void showCustomBossBar(CustomBossBar customBossBar) {if(player!=null && customBossBar!=null) player.showBossBar(customBossBar.getBossBar());}
+    public void hideCustomBossBar(CustomBossBar customBossBar) {if(player!=null && customBossBar!=null) player.hideBossBar(customBossBar.getBossBar());}
 }

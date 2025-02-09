@@ -23,12 +23,16 @@ public final class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new Events(game),this);
 
         game.getSidebar().resetModeScore(game.getGameMode());
+        game.getSidebar().resetColorRepeat(game.isColorRepeat());
     }
 
     @Override
     public void onDisable(){
+        game.setBlackBlocks();
+        configManager.saveParticipants();
         configManager.saveOptions();
     }
 
     public Game getGame() {return game;}
+    public ConfigManager getConfigManager() {return configManager;}
 }

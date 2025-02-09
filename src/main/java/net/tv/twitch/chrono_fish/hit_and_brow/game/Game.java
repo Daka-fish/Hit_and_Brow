@@ -1,13 +1,19 @@
 package net.tv.twitch.chrono_fish.hit_and_brow.game;
 
+import net.kyori.adventure.text.Component;
 import net.tv.twitch.chrono_fish.hit_and_brow.Main;
 import net.tv.twitch.chrono_fish.hit_and_brow.instance.GameColor;
 import net.tv.twitch.chrono_fish.hit_and_brow.instance.GameMode;
+import net.tv.twitch.chrono_fish.hit_and_brow.speed.CustomBossBar;
+import net.tv.twitch.chrono_fish.hit_and_brow.speed.SpeedTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,11 +31,15 @@ public class Game {
     private GameMode gameMode;
     private Location baseLocation;
     private Location correctLocation;
-    private int max_player_size;
-    private int max_turn;
-    private boolean color_repeat;
+    private int maxPlayerSize;
+    private int maxTurn;
+    private boolean isColorRepeat;
 
-    private CustomSidebar sidebar;
+    private final CustomSidebar sidebar;
+    private final CustomBossBar customBossBar;
+
+    private SpeedTimer speedTimer;
+    private int speedModeSeconds;
 
     public Game(Main main){
         this.main = main;
@@ -37,8 +47,8 @@ public class Game {
         this.correctColors = new ArrayList<>(4);
         this.isRunning = false;
         this.turnCount = 0;
-
         this.sidebar = new CustomSidebar();
+        this.customBossBar = new CustomBossBar();
     }
 
     public Main getMain() {return main;}
@@ -51,11 +61,15 @@ public class Game {
     public int getTurnCount() {return turnCount;}
     public void setTurnCount(int turnCount) {
         this.turnCount = turnCount;
-        sidebar.resetTurnScore(turnCount);
+        sidebar.resetTurnCountScore(turnCount);
     }
 
     public GamePlayer getTurnPlayer() {return turnPlayer;}
-    public void setTurnPlayer(GamePlayer turnPlayer) {this.turnPlayer = turnPlayer;}
+    public void setTurnPlayer(GamePlayer gamePlayer) {
+        this.turnPlayer = gamePlayer;
+        turnPlayer.sendActionBar("§aあなたのターンです");
+        sidebar.resetTurnPlayerScore(turnPlayer);
+    }
 
     public GameMode getGameMode() {return gameMode;}
     public void setGameMode(GameMode gameMode) {
@@ -66,21 +80,40 @@ public class Game {
     public Location getBaseLocation() {return baseLocation;}
     public void setBaseLocation(Location baseLocation) {this.baseLocation = baseLocation;}
 
-    public Location getCurrentLocation() {return baseLocation.clone().add(2*(turnCount-1),0,0);}
+    public Location getCurrentLocation() {return baseLocation.clone().add(2*((turnCount-1)%maxTurn),0,0);}
 
     public Location getCorrectLocation() {return correctLocation;}
     public void setCorrectLocation(Location correctLocation) {this.correctLocation = correctLocation;}
 
-    public int getMax_player_size() {return max_player_size;}
-    public void setMax_player_size(int max_player_size) {this.max_player_size = max_player_size;}
+    public int getMaxPlayerSize() {return maxPlayerSize;}
+    public void setMaxPlayerSize(int maxPlayerSize) {this.maxPlayerSize = maxPlayerSize;}
 
-    public int getMax_turn() {return max_turn;}
-    public void setMax_turn(int max_turn) {this.max_turn = max_turn;}
+    public int getMaxTurn() {return maxTurn;}
+    public void setMaxTurn(int maxTurn) {this.maxTurn = maxTurn;}
 
-    public boolean isColor_repeat() {return color_repeat;}
-    public void setColor_repeat(boolean color_repeat) {this.color_repeat = color_repeat;}
+    public boolean isColorRepeat() {return isColorRepeat;}
+    public void setColorRepeat(boolean colorRepeat) {
+        this.isColorRepeat = colorRepeat;
+        sidebar.resetColorRepeat(colorRepeat);
+    }
 
     public CustomSidebar getSidebar() {return sidebar;}
+
+    public CustomBossBar getCustomBossBar() {return customBossBar;}
+
+    public void startTimer(){
+        this.speedTimer = new SpeedTimer(this);
+        speedTimer.startTimer();
+    }
+
+    public void cancelTimer(){
+        if(this.speedTimer != null){
+            speedTimer.taskCancel();
+        }
+    }
+
+    public int getSpeedModeSeconds() {return speedModeSeconds;}
+    public void setSpeedModeSeconds(int seconds){this.speedModeSeconds = seconds;}
 
     public GamePlayer getGamePlayer(Player player){
         for(GamePlayer gamePlayer : participants){
@@ -89,18 +122,29 @@ public class Game {
         return null;
     }
 
-    public void join(GamePlayer gamePlayer) {
-        if (!participants.contains(gamePlayer)){
-            participants.add(gamePlayer);
-            broadCastMessage("§e"+gamePlayer.getName()+"§fがゲームに参加しました");
-            gamePlayer.setScoreBoard(sidebar);
+    public void join(Player player) {
+        if(isRunning){
+            player.sendActionBar(Component.text("§cゲーム進行中は参加できません"));
+            return;
+        }
+        if (getGamePlayer(player) == null){
+            GamePlayer joinedPlayer = new GamePlayer(this,player);
+            participants.add(joinedPlayer);
+            broadCastMessage("§e"+joinedPlayer.getPlayerName()+"§fがゲームに参加しました");
+            joinedPlayer.setSidebar(sidebar);
+        }else{
+            player.sendActionBar(Component.text("§c既に参加しています"));
         }
     }
 
-    public void leave(GamePlayer gamePlayer) {
-        if (participants.contains(gamePlayer)){
+    public void leave(Player player) {
+        if (getGamePlayer(player) != null){
+            GamePlayer gamePlayer = getGamePlayer(player);
+            gamePlayer.setEmptySidebar();
+            broadCastMessage("§e"+gamePlayer.getPlayerName()+"§fがゲームから退室しました");
             participants.remove(gamePlayer);
-            broadCastMessage("§e"+gamePlayer.getName()+"§fがゲームから退室しました");
+        }else{
+            player.sendActionBar(Component.text("§c参加していません"));
         }
     }
 
@@ -119,7 +163,11 @@ public class Game {
                 if(cc.equals(GameColor.BLACK)) continue;
                 currentPlayer.getInventory().addItem(new ItemStack(cc.getMaterial(),4-getMaterialCount(currentPlayer, cc.getMaterial())));
             }
-            currentPlayer.getInventory().addItem(new ItemStack(Material.BLAZE_ROD));
+            currentPlayer.getInventory().addItem(new ItemStack(Material.BLAZE_ROD,1-getMaterialCount(currentPlayer,Material.BLAZE_ROD)));
+            currentPlayer.getInventory().addItem(new ItemStack(Material.SHEARS,1-getMaterialCount(currentPlayer,Material.SHEARS)));
+            if(gameMode.equals(GameMode.SPEED)){
+                startTimer();
+            }
         }
     }
 
@@ -133,7 +181,7 @@ public class Game {
         return count;
     }
 
-    private void assignColors(){
+    private void assignColors() {
         correctColors.clear();
         ArrayList<GameColor> colorPool = new ArrayList<>(6);
         colorPool.add(GameColor.RED);
@@ -143,80 +191,144 @@ public class Game {
         colorPool.add(GameColor.PINK);
         colorPool.add(GameColor.YELLOW);
         Collections.shuffle(colorPool);
-        for(int i=0; i<4; i++){
-            correctColors.add(i,colorPool.get(i));
+
+        if(isColorRepeat) {
+            GameColor repeatColor = colorPool.get(0);
+            correctColors.add(repeatColor);
+            correctColors.add(repeatColor);
+
+            correctColors.add(colorPool.get(1));
+            correctColors.add(colorPool.get(2));
+        }else {
+            for(int i = 0; i < 4; i++) {
+                correctColors.add(colorPool.get(i));
+            }
         }
+
+        Collections.shuffle(correctColors);
     }
 
-    public void start(GamePlayer gamePlayer){
+    public void start(Player player){
         if(!isRunning){
             if(participants.size()>0){
                 isRunning = true;
-                setTurnCount(1);
                 Collections.shuffle(participants);
+                setTurnCount(1);
                 assignColors();
                 setBlackBlocks();
                 setNextPlayer();
-                broadCastMessage("[ターン" + turnCount + "] §e" + turnPlayer.getName() +"§fのターン");
                 sidebar.hideCorrectScore();
-                switch(gameMode){
-                    case NORMAL:
-                        break;
 
-                    case SPEED:
-                        speed();
-                        break;
-
-                    case PRACTICE:
-                        practice();
-                        break;
+                for(GamePlayer participant : participants) {
+                    if(gameMode.equals(GameMode.SPEED)){
+                        addPotionEffect(participant, new PotionEffect(PotionEffectType.SPEED,99*60*20,0,false,true));
+                        participant.showCustomBossBar(customBossBar);
+                    }
                 }
             }
         }else{
-            gamePlayer.sendActionBar("§c既にゲームが進行中です");
+            player.sendActionBar(Component.text("§c既にゲームが進行中です"));
         }
     }
 
-    public void finish(GamePlayer gamePlayer){
+    public void finish(Player player){
         if(isRunning){
             broadCastMessage("....");
             isRunning = false;
             Bukkit.getScheduler().runTaskLater(main,()->{
-                StringBuilder correct_is = new StringBuilder("正解は、");
-                for(GameColor gameColor :correctColors){
-                    correct_is.append(gameColor.getColorBlock());
+                cancelTimer();
+                StringBuilder message = new StringBuilder("正解は、");
+                for(GameColor gameColor : correctColors){
+                    message.append(gameColor.getColorBlockStr());
                 }
-                broadCastMessage("ゲーム終了！§a"+turnPlayer.getName()+"§fの勝ち！");
-                broadCastMessage(correct_is.toString());
+                sidebar.setCorrectScore(correctColors);
+                broadCastMessage("ゲーム終了！§a"+turnPlayer.getPlayerName()+"§fの勝ち！");
+                broadCastMessage(message.toString());
                 openCorrectBlock();
                 broadCastMessage("かかったターン数:§e "+turnCount);
-                sidebar.setCorrectScore(correctColors);
+                for (GamePlayer participant : participants) {
+                    participant.getPlayer().getInventory().clear();
+                    removePotionEffect(participant, PotionEffectType.SPEED);
+                    participant.hideCustomBossBar(customBossBar);
+                }
             },40L);
         }else{
-            gamePlayer.sendActionBar("§c進行中のゲームがありません");
+            player.sendActionBar(Component.text("§c進行中のゲームがありません"));
         }
     }
 
-    public boolean checkColor(ArrayList<GameColor> colors) {
-        if(colors.size()==4){
-            StringBuilder message = new StringBuilder("[ターン"+turnCount+"§f] ");
-            int hit = 0;
-            int brow = 0;
-
-            for (GameColor color : colors) {
-                message.append(color.getColorBlock());
-                if(correctColors.contains(color)){
-                    if(correctColors.indexOf(color) == colors.indexOf(color)){
-                        hit ++;
-                        continue;
-                    }
-                    brow ++;
+    public void draw(){
+        if(isRunning){
+            broadCastMessage("....");
+            isRunning = false;
+            Bukkit.getScheduler().runTaskLater(main,()->{
+                StringBuilder message = new StringBuilder();
+                for(GameColor gameColor : correctColors){
+                    message.append(gameColor.getColorBlockStr());
                 }
-            }
-            broadCastMessage(message+" §a"+hit+"§fヒット、"+"§e"+brow+"§fブロー！");
-            return hit == 4 && brow == 0;
+                broadCastMessage("引き分け！正解は "+message);
+                openCorrectBlock();
+                for (GamePlayer participant : participants) {
+                    participant.getPlayer().getInventory().clear();
+                    removePotionEffect(participant, PotionEffectType.SPEED);
+                    participant.hideCustomBossBar(customBossBar);
+                }
+            },40L);
         }
+    }
+
+    public void killGame(Player player){
+        player.sendMessage("§Cゲームを強制強制終了します");
+        isRunning = false;
+        sidebar.setCorrectScore(correctColors);
+        cancelTimer();
+        openCorrectBlock();
+        broadCastMessage("§cゲームを終了しました");
+        for (GamePlayer participant : participants) {
+            participant.getPlayer().getInventory().clear();
+            removePotionEffect(participant, PotionEffectType.SPEED);
+            participant.hideCustomBossBar(customBossBar);
+        }
+    }
+
+    public boolean checkColor(ArrayList<GameColor> submittedColors) {
+        //同色ありの場合で動作するようにしたら、複雑になった
+        if (submittedColors.size() != 4) return false;
+
+        int hit = 0;
+        int brow = 0;
+        ArrayList<GameColor> remainingCorrect = new ArrayList<>(correctColors);
+        ArrayList<GameColor> remainingSubmitted = new ArrayList<>();
+
+        // まずHITを判定し、該当する色を削除
+        for (int i = 0; i < 4; i++) {
+            if (submittedColors.get(i).equals(correctColors.get(i))) {
+                hit++;
+                remainingCorrect.set(i, null); // ヒットした色は削除 (null でマーク)
+            } else {
+                remainingSubmitted.add(submittedColors.get(i));
+            }
+        }
+
+        // BROWを判定
+        for (GameColor color : remainingSubmitted) {
+            if (remainingCorrect.contains(color)) {
+                brow++;
+                remainingCorrect.remove(color); // 重複を防ぐために削除
+            }
+        }
+        if(hit == 4 && brow == 0) return true;
+        if(turnCount < maxTurn || gameMode.equals(GameMode.SPEED)) broadcastSubmitResult(submittedColors, hit, brow);
         return false;
+    }
+
+    private void broadcastSubmitResult(ArrayList<GameColor> colors, int hit, int brow){
+        StringBuilder colors_str = new StringBuilder();
+        String submit_result = "§a"+hit+"§fヒット §e"+brow+"§fブロー";
+        for (GameColor color : colors) {
+            colors_str.append(color.getColorBlockStr());
+        }
+        broadCastMessage("[ターン"+turnCount+"] "+colors_str+" "+submit_result);
     }
 
     private void openCorrectBlock(){
@@ -227,9 +339,9 @@ public class Game {
         }
     }
 
-    private void setBlackBlocks(){
+    public void setBlackBlocks(){
         Location baseLoc = baseLocation.clone();
-        for (int i=0; i<max_turn; i++) {
+        for (int i = 0; i< maxTurn; i++) {
             for(int j=0; j<4; j++){
                 if(!baseLoc.getBlock().getType().equals(Material.BLACK_WOOL)){
                     baseLoc.getBlock().setType(Material.BLACK_WOOL);
@@ -248,11 +360,15 @@ public class Game {
         }
     }
 
-    private void practice(){
-        broadCastMessage("プラクティスモードではHit&Browの遊び方についてご説明します");
+    public boolean isCurrentWool(Block block) {
+        for (GameColor gameColor : GameColor.values()) {
+            if(gameColor.getMaterial().equals(block.getType())){
+                if(getCurrentLocation().getX() == block.getX()) return true;
+            }
+        }
+        return false;
     }
 
-    private void speed(){
-        broadCastMessage("スピードモードスタート！");
-    }
+    public void addPotionEffect(GamePlayer gamePlayer, PotionEffect potionEffect){if(gamePlayer.getPlayer()!=null) gamePlayer.getPlayer().addPotionEffect(potionEffect);}
+    public void removePotionEffect(GamePlayer gamePlayer, PotionEffectType potionEffectType){if(gamePlayer.getPlayer()!=null) gamePlayer.getPlayer().removePotionEffect(potionEffectType);}
 }

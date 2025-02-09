@@ -1,5 +1,6 @@
 package net.tv.twitch.chrono_fish.hit_and_brow.command;
 
+import net.kyori.adventure.text.Component;
 import net.tv.twitch.chrono_fish.hit_and_brow.Main;
 import net.tv.twitch.chrono_fish.hit_and_brow.game.Game;
 import net.tv.twitch.chrono_fish.hit_and_brow.game.GamePlayer;
@@ -24,22 +25,20 @@ public class Commands implements CommandExecutor {
             Player snd = (Player) sender;
             if(command.getName().equalsIgnoreCase("hab")){
                 if(args.length > 0){
-                    GamePlayer gamePlayer = game.getGamePlayer(snd);
-                    if (gamePlayer==null) return false;
                     switch(args[0]){
                         case "start":
-                            game.start(gamePlayer);
+                            game.start(snd);
                             break;
 
                         case "finish":
-                            game.finish(gamePlayer);
+                            game.killGame(snd);
                             break;
 
                         case "list":
-                            gamePlayer.sendMessage("§6[参加者]§f");
+                            snd.sendMessage("§6[参加者]§f");
                             int index = 1;
                             for (GamePlayer participant : game.getParticipants()) {
-                                gamePlayer.sendMessage(index+": "+participant.getName());
+                                snd.sendMessage(index+": "+participant.getPlayerName());
                             }
                             break;
 
@@ -48,24 +47,24 @@ public class Commands implements CommandExecutor {
                             break;
 
                         case "setting":
-                            gamePlayer.sendMessage("§6[ゲーム設定]§f");
-                            gamePlayer.sendMessage("参加可能人数: §e"+game.getMax_player_size()+"§f人");
-                            gamePlayer.sendMessage("最終ターン:   §e"+game.getMax_turn()+"§fターン");
-                            gamePlayer.sendMessage("同色重複:     §e"+((game.isColor_repeat()) ? "オン" : "オフ"));
-                            gamePlayer.sendMessage("ゲームモード: §e"+game.getGameMode().get_mode_name());
+                            snd.sendMessage("§6[ゲーム設定]§f");
+                            snd.sendMessage("参加可能人数: §e"+game.getMaxPlayerSize()+"§f人");
+                            snd.sendMessage("最終ターン:   §e"+game.getMaxTurn()+"§fターン");
+                            snd.sendMessage("同色重複:     §e"+((game.isColorRepeat()) ? "オン" : "オフ"));
+                            snd.sendMessage("ゲームモード: §e"+game.getGameMode().get_mode_name());
                             break;
 
                         case "mode":
                             if(args.length==1){
-                                gamePlayer.sendMessage("現在のゲームモード: §e"+game.getGameMode().get_mode_name());
+                                snd.sendMessage("現在のゲームモード: "+game.getGameMode().get_mode_name());
                             }
                             if(args.length==2){
                                 try{
                                     GameMode gamemode = GameMode.valueOf(args[1].toUpperCase());
                                     game.setGameMode(gamemode);
-                                    gamePlayer.sendMessage("ゲームモードを§e"+game.getGameMode().get_mode_name()+"§fに変更しました");
+                                    snd.sendMessage("ゲームモードを§e"+game.getGameMode().get_mode_name()+"§fに変更しました");
                                 } catch (IllegalArgumentException e) {
-                                    gamePlayer.sendActionBar("§cゲームモードが見つかりませんでした("+args[1]+")");
+                                    snd.sendActionBar(Component.text("§cゲームモードが見つかりませんでした("+args[1]+")"));
                                     return false;
                                 }
                             }
@@ -75,20 +74,20 @@ public class Commands implements CommandExecutor {
                             if(args.length==2){
                                 switch(args[1]){
                                     case "true":
-                                        game.setColor_repeat(true);
-                                        gamePlayer.sendMessage("同色重複をオンにしました");
+                                        game.setColorRepeat(true);
+                                        snd.sendMessage("答えの同色をオンにしました");
                                         break;
 
                                     case "false":
-                                        game.setColor_repeat(false);
-                                        gamePlayer.sendMessage("同色重複をオフにしました");
+                                        game.setColorRepeat(false);
+                                        snd.sendMessage("答えの同色をオフにしました");
                                         break;
 
                                     default:
-                                        gamePlayer.sendActionBar("§c"+"trueかfalseを指定してください");
+                                        snd.sendActionBar(Component.text("§c"+"trueかfalseを指定してください"));
                                 }
                             }else{
-                                gamePlayer.sendActionBar("§c/hab color-repeat {true, false}");
+                                snd.sendActionBar(Component.text("§c/hab color-repeat {true, false}"));
                             }
                             break;
 
