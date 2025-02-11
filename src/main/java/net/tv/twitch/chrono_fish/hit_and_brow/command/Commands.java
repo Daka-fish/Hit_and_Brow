@@ -9,6 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class Commands implements CommandExecutor {
@@ -21,13 +22,19 @@ public class Commands implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
         if(sender instanceof Player){
             Player snd = (Player) sender;
-            if(!snd.hasPermission("hab.op")){
-                snd.sendMessage("§c権限がありません");
-                return false;
-            }
             if(command.getName().equalsIgnoreCase("hab")){
+                if(!snd.hasPermission("hab.op")){
+                    snd.sendMessage("§c権限がありません");
+                    return false;
+                }
                 if(args.length > 0){
                     switch(args[0]){
+                        case "book":
+                            ItemStack book = game.getMain().getCustomItems().GameSettingBook();
+                            snd.getInventory().addItem(book);
+                            snd.sendMessage(book.displayName().append(Component.text("を追加しました")));
+                            break;
+
                         case "start":
                             game.start(snd);
                             break;
@@ -90,6 +97,19 @@ public class Commands implements CommandExecutor {
                                 }
                             }else{
                                 snd.sendActionBar(Component.text("§c/hab color-repeat {true, false}"));
+                            }
+                            break;
+
+                        case "speed-time":
+                            if(args.length==2){
+                                if(args[1].equalsIgnoreCase("+")){
+                                    game.setSpeedModeSeconds(game.getSpeedModeSeconds()+5);
+                                    snd.sendMessage("スピードモードの制限時間を§e"+game.getSpeedModeSeconds()+"§f秒に設定しました");
+                                }
+                                if(args[1].equalsIgnoreCase("-")){
+                                    game.setSpeedModeSeconds(game.getSpeedModeSeconds()-5);
+                                    snd.sendMessage("スピードモードの制限時間を§e"+game.getSpeedModeSeconds()+"§f秒に設定しました");
+                                }
                             }
                             break;
 

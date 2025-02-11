@@ -250,6 +250,7 @@ public class Game {
                     participant.getPlayer().getInventory().clear();
                     removePotionEffect(participant, PotionEffectType.SPEED);
                     participant.hideCustomBossBar(customBossBar);
+                    if(participant.getPlayer().isOp()) participant.getPlayer().getInventory().addItem(main.getCustomItems().GameSettingBook());
                 }
             },40L);
         }else{
@@ -278,16 +279,19 @@ public class Game {
     }
 
     public void killGame(Player player){
-        player.sendMessage("§Cゲームを強制強制終了します");
-        isRunning = false;
-        sidebar.setCorrectScore(correctColors);
-        cancelTimer();
-        openCorrectBlock();
-        broadCastMessage("§cゲームを終了しました");
-        for (GamePlayer participant : participants) {
-            participant.getPlayer().getInventory().clear();
-            removePotionEffect(participant, PotionEffectType.SPEED);
-            participant.hideCustomBossBar(customBossBar);
+        player.sendMessage("§Cゲームを強制終了します");
+        if(isRunning){
+            isRunning = false;
+            sidebar.setCorrectScore(correctColors);
+            cancelTimer();
+            openCorrectBlock();
+            broadCastMessage("§cゲームを終了しました");
+            for (GamePlayer participant : participants) {
+                participant.getPlayer().getInventory().clear();
+                if(participant.getPlayer().isOp()) participant.getPlayer().getInventory().addItem(main.getCustomItems().GameSettingBook());
+                removePotionEffect(participant, PotionEffectType.SPEED);
+                participant.hideCustomBossBar(customBossBar);
+            }
         }
     }
 
