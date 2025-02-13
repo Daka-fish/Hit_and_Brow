@@ -54,7 +54,6 @@ public class Game {
     public Main getMain() {return main;}
 
     public ArrayList<GamePlayer> getParticipants() {return participants;}
-    public ArrayList<GameColor> getCorrectColors() {return correctColors;}
 
     public boolean isRunning() {return isRunning;}
 
@@ -77,12 +76,10 @@ public class Game {
         sidebar.resetModeScore(gameMode);
     }
 
-    public Location getBaseLocation() {return baseLocation;}
     public void setBaseLocation(Location baseLocation) {this.baseLocation = baseLocation;}
 
     public Location getCurrentLocation() {return baseLocation.clone().add(2*((turnCount-1)%maxTurn),0,0);}
 
-    public Location getCorrectLocation() {return correctLocation;}
     public void setCorrectLocation(Location correctLocation) {this.correctLocation = correctLocation;}
 
     public int getMaxPlayerSize() {return maxPlayerSize;}
@@ -158,20 +155,24 @@ public class Game {
                 int index = (participants.indexOf(getTurnPlayer()) + 1) % participants.size();
                 setTurnPlayer(participants.get(index));
             }
-            Player currentPlayer = turnPlayer.getPlayer();
-            for(GameColor cc: GameColor.values()){
-                if(cc.equals(GameColor.BLACK)) continue;
-                currentPlayer.getInventory().addItem(new ItemStack(cc.getMaterial(),4-getMaterialCount(currentPlayer, cc.getMaterial())));
-            }
-            currentPlayer.getInventory().addItem(new ItemStack(Material.BLAZE_ROD,1-getMaterialCount(currentPlayer,Material.BLAZE_ROD)));
-            currentPlayer.getInventory().addItem(new ItemStack(Material.SHEARS,1-getMaterialCount(currentPlayer,Material.SHEARS)));
-            if(gameMode.equals(GameMode.SPEED)){
-                startTimer();
-            }
+            addTurnPlayerItems(turnPlayer);
         }
     }
 
-    public int getMaterialCount(Player player, Material material){
+    private void addTurnPlayerItems(GamePlayer gamePlayer){
+        Player currentPlayer = gamePlayer.getPlayer();
+        for(GameColor cc: GameColor.values()){
+            if(cc.equals(GameColor.BLACK)) continue;
+            currentPlayer.getInventory().addItem(new ItemStack(cc.getMaterial(),4-getMaterialCount(currentPlayer, cc.getMaterial())));
+        }
+        currentPlayer.getInventory().addItem(new ItemStack(Material.BLAZE_ROD,1-getMaterialCount(currentPlayer,Material.BLAZE_ROD)));
+        currentPlayer.getInventory().addItem(new ItemStack(Material.SHEARS,1-getMaterialCount(currentPlayer,Material.SHEARS)));
+        if(gameMode.equals(GameMode.SPEED)){
+            startTimer();
+        }
+    }
+
+    private int getMaterialCount(Player player, Material material){
         int count = 0;
         for(ItemStack item : player.getInventory().getContents()){
             if(item != null && item.getType() == material){
@@ -373,6 +374,6 @@ public class Game {
         return false;
     }
 
-    public void addPotionEffect(GamePlayer gamePlayer, PotionEffect potionEffect){if(gamePlayer.getPlayer()!=null) gamePlayer.getPlayer().addPotionEffect(potionEffect);}
-    public void removePotionEffect(GamePlayer gamePlayer, PotionEffectType potionEffectType){if(gamePlayer.getPlayer()!=null) gamePlayer.getPlayer().removePotionEffect(potionEffectType);}
+    private void addPotionEffect(GamePlayer gamePlayer, PotionEffect potionEffect){if(gamePlayer.getPlayer()!=null) gamePlayer.getPlayer().addPotionEffect(potionEffect);}
+    private void removePotionEffect(GamePlayer gamePlayer, PotionEffectType potionEffectType){if(gamePlayer.getPlayer()!=null) gamePlayer.getPlayer().removePotionEffect(potionEffectType);}
 }

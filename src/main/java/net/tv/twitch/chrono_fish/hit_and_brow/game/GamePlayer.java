@@ -33,23 +33,23 @@ public class GamePlayer {
     public void sendActionBar(String message) {if(player != null) player.sendActionBar(Component.text(message));}
 
     public void submitColors(){
-        if(game.getTurnPlayer().equals(this)){
-            if(game.getGameMode().equals(GameMode.SPEED)) {
-                game.getCustomBossBar().setProgress(0);
-                game.cancelTimer();
-            }
-            if(player.getInventory().contains(Material.BLAZE_ROD)) player.getInventory().remove(Material.BLAZE_ROD);
-            if(game.checkColor(getPlayerColor())) game.finish(player);
-            if(game.isRunning()) {
-                if(game.getTurnCount()==game.getMaxTurn() && !game.getGameMode().equals(GameMode.SPEED)){
-                    game.draw();
-                    return;
-                }
-                game.setNextPlayer();
-                game.setTurnCount(game.getTurnCount()+1);
-            }
-        }else{
+        if(!game.getTurnPlayer().equals(this)){
             sendActionBar("§cあなたのターンではありません");
+            return;
+        }
+        if(game.getGameMode().equals(GameMode.SPEED)) {
+            game.getCustomBossBar().setProgress(0);
+            game.cancelTimer();
+        }
+        if(player.getInventory().contains(Material.BLAZE_ROD)) player.getInventory().remove(Material.BLAZE_ROD);
+        if(game.checkColor(getPlayerColor())) game.finish(player);
+        if(game.isRunning()) {
+            if(game.getTurnCount()==game.getMaxTurn() && !game.getGameMode().equals(GameMode.SPEED)){
+                game.draw();
+                return;
+            }
+            game.setNextPlayer();
+            game.setTurnCount(game.getTurnCount()+1);
         }
     }
 
