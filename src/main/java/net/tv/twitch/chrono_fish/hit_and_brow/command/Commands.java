@@ -42,7 +42,7 @@ public class Commands implements CommandExecutor {
                             game.start(snd);
                             break;
 
-                        case "finish":
+                        case "kill-game":
                             game.killGame(snd);
                             break;
 

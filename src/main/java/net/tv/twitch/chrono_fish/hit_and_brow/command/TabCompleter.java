@@ -17,7 +17,7 @@ public class TabCompleter implements org.bukkit.command.TabCompleter {
         if (command.getName().equalsIgnoreCase("hab")) {
             if (strings.length == 1) {
                 suggestions.add("start");
-                suggestions.add("finish");
+                suggestions.add("kill-game");
                 suggestions.add("book");
                 suggestions.add("list");
                 suggestions.add("help");
