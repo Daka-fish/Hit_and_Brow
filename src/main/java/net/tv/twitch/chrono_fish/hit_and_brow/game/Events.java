@@ -1,6 +1,7 @@
 package net.tv.twitch.chrono_fish.hit_and_brow.game;
 
 import net.kyori.adventure.text.Component;
+import net.tv.twitch.chrono_fish.hit_and_brow.Main;
 import net.tv.twitch.chrono_fish.hit_and_brow.instance.GameColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -17,8 +18,12 @@ import org.bukkit.potion.PotionEffectType;
 public class Events implements Listener {
 
     private final Game game;
+    private final Main main;
 
-    public Events(Game game){this.game = game;}
+    public Events(Main main){
+        this.game = main.getGame();
+        this.main = main;
+    }
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e){
@@ -75,5 +80,12 @@ public class Events implements Listener {
     }
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent e) {game.leave(e.getPlayer());}
+    public void onQuit(PlayerQuitEvent e) {
+        if(game.getGamePlayer(e.getPlayer())==null){
+            main.getConfigManager().removeParticipant(e.getPlayer().getName());
+        }else{
+            main.getConfigManager().addParticipants(game.getGamePlayer(e.getPlayer()));
+            game.leave(e.getPlayer());
+        }
+    }
 }

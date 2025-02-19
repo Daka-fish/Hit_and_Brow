@@ -7,7 +7,6 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ConfigManager {
@@ -62,11 +61,19 @@ public class ConfigManager {
     private void setSpeedModeTimerSeconds() {config.set("game.speed-mode-seconds", game.getSpeedModeSeconds());}
 
     public List<String> getLastParticipants() {return config.getStringList("last-participants");}
-    public void saveParticipants() {
-        List<String> participantsNames = new ArrayList<>();
-        for(GamePlayer participant : game.getParticipants()) participantsNames.add(participant.getPlayerName());
+
+    public void addParticipants(GamePlayer gamePlayer) {
+        List<String> participantsNames = getLastParticipants();
+        participantsNames.add(gamePlayer.getPlayerName());
         config.set("last-participants",participantsNames);
-        game.getMain().saveConfig();
+    }
+
+    public void removeParticipant(String playerName) {
+        List<String> players = config.getStringList("path.players");
+        if (players.contains(playerName)) {
+            players.remove(playerName);
+            config.set("path.players", players);
+        }
     }
 
     public void loadOptions() {
@@ -83,6 +90,5 @@ public class ConfigManager {
         setGameMode();
         setSpeedModeTimerSeconds();
         set_is_color_repeat();
-        game.getMain().saveConfig();
     }
 }

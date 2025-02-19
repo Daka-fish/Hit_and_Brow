@@ -23,7 +23,7 @@ public final class Main extends JavaPlugin {
         configManager.loadOptions();
         getCommand("hab").setExecutor(new Commands(this));
         getCommand("hab").setTabCompleter(new TabCompleter());
-        Bukkit.getPluginManager().registerEvents(new Events(game),this);
+        Bukkit.getPluginManager().registerEvents(new Events(this),this);
         customItems.setGameSettingBook();
         game.getSidebar().resetModeScore(game.getGameMode());
         game.getSidebar().resetColorRepeat(game.isColorRepeat());
@@ -32,8 +32,8 @@ public final class Main extends JavaPlugin {
     @Override
     public void onDisable(){
         game.setBlackBlocks();
-        configManager.saveParticipants();
         configManager.saveOptions();
+        saveConfig();
     }
 
     public Game getGame() {return game;}
