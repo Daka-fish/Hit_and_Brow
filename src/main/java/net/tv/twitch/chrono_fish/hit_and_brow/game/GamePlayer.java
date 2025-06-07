@@ -48,7 +48,9 @@ public class GamePlayer {
                 game.draw();
                 return;
             }
-            game.setTurnCount(game.getTurnCount()+1);
+            int current_turn_count = game.getTurnCount()+1;
+            game.setTurnCount(current_turn_count);
+            game.getSidebar().resetTurnCountScore(current_turn_count);
             game.setNextPlayer();
         }
     }

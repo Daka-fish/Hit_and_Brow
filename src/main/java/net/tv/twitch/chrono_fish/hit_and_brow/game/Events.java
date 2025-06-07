@@ -18,11 +18,9 @@ import org.bukkit.potion.PotionEffectType;
 public class Events implements Listener {
 
     private final Game game;
-    private final Main main;
 
     public Events(Main main){
         this.game = main.getGame();
-        this.main = main;
     }
 
     @EventHandler
@@ -74,12 +72,16 @@ public class Events implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        e.joinMessage(Component.text("§e"+e.getPlayer().getName()+"§fがサーバに参加しました"));
-        e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 99*60*20,4,false,false));
+        e.joinMessage(Component.text(""));
+        Player joinPlayer = e.getPlayer();
+        joinPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 99*60*20,4,false,false));
+        if(game.getGamePlayer(joinPlayer) == null) game.join(joinPlayer);
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        game.leave(e.getPlayer());
+        Player player = e.getPlayer();
+        if(game.getGamePlayer(player) == null) return;
+        game.leave(player);
     }
 }

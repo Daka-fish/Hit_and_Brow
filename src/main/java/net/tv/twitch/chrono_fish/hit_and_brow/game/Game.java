@@ -60,7 +60,6 @@ public class Game {
     public int getTurnCount() {return turnCount;}
     public void setTurnCount(int turnCount) {
         this.turnCount = turnCount;
-        sidebar.resetTurnCountScore(turnCount);
     }
 
     public GamePlayer getTurnPlayer() {return turnPlayer;}
@@ -139,7 +138,7 @@ public class Game {
         }
     }
 
-    public void broadCastMessage(String message){participants.forEach(gamePlayer -> gamePlayer.sendMessage(((!isRunning) ? "[game] ":"")+message));}
+    public void broadCastMessage(String message){participants.forEach(gamePlayer -> gamePlayer.sendMessage(((!isRunning) ? "[H&B] ":"")+message));}
 
     public void setNextPlayer(){
         if(isRunning){
@@ -209,6 +208,7 @@ public class Game {
                 isRunning = true;
                 Collections.shuffle(participants);
                 turnCount = 1;
+                sidebar.resetTurnCountScore(1);
                 assignColors();
                 setBlackBlocks();
                 setNextPlayer();
@@ -266,6 +266,7 @@ public class Game {
                 openCorrectBlock();
                 for (GamePlayer participant : participants) {
                     participant.getPlayer().getInventory().clear();
+                    if(participant.getPlayer().isOp()) participant.getPlayer().getInventory().addItem(main.getCustomItems().GameSettingBook());
                     removePotionEffect(participant);
                     participant.hideCustomBossBar(customBossBar);
                 }
