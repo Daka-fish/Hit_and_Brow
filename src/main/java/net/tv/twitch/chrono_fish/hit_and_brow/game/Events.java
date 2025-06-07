@@ -76,16 +76,10 @@ public class Events implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         e.joinMessage(Component.text("§e"+e.getPlayer().getName()+"§fがサーバに参加しました"));
         e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 99*60*20,4,false,false));
-        if(game.getMain().getConfigManager().getLastParticipants().contains(e.getPlayer().getName())) game.join(e.getPlayer());
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        if(game.getGamePlayer(e.getPlayer())==null){
-            main.getConfigManager().removeParticipant(e.getPlayer().getName());
-        }else{
-            main.getConfigManager().addParticipants(game.getGamePlayer(e.getPlayer()));
-            game.leave(e.getPlayer());
-        }
+        game.leave(e.getPlayer());
     }
 }

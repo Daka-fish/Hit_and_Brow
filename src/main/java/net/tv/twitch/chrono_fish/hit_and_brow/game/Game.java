@@ -76,17 +76,11 @@ public class Game {
         sidebar.resetModeScore(gameMode);
     }
 
-    public void setBaseLocation(Location baseLocation) {this.baseLocation = baseLocation;}
-
     public Location getCurrentLocation() {return baseLocation.clone().add(2*((turnCount-1)%maxTurn),0,0);}
 
-    public void setCorrectLocation(Location correctLocation) {this.correctLocation = correctLocation;}
-
     public int getMaxPlayerSize() {return maxPlayerSize;}
-    public void setMaxPlayerSize(int maxPlayerSize) {this.maxPlayerSize = maxPlayerSize;}
 
     public int getMaxTurn() {return maxTurn;}
-    public void setMaxTurn(int maxTurn) {this.maxTurn = maxTurn;}
 
     public boolean isColorRepeat() {return isColorRepeat;}
     public void setColorRepeat(boolean colorRepeat) {
@@ -214,7 +208,7 @@ public class Game {
             if(participants.size()>0){
                 isRunning = true;
                 Collections.shuffle(participants);
-                setTurnCount(1);
+                turnCount = 1;
                 assignColors();
                 setBlackBlocks();
                 setNextPlayer();
@@ -249,7 +243,7 @@ public class Game {
                 broadCastMessage("かかったターン数:§e "+turnCount);
                 for (GamePlayer participant : participants) {
                     participant.getPlayer().getInventory().clear();
-                    removePotionEffect(participant, PotionEffectType.SPEED);
+                    removePotionEffect(participant);
                     participant.hideCustomBossBar(customBossBar);
                     if(participant.getPlayer().isOp()) participant.getPlayer().getInventory().addItem(main.getCustomItems().GameSettingBook());
                 }
@@ -272,7 +266,7 @@ public class Game {
                 openCorrectBlock();
                 for (GamePlayer participant : participants) {
                     participant.getPlayer().getInventory().clear();
-                    removePotionEffect(participant, PotionEffectType.SPEED);
+                    removePotionEffect(participant);
                     participant.hideCustomBossBar(customBossBar);
                 }
             },40L);
@@ -290,7 +284,7 @@ public class Game {
             for (GamePlayer participant : participants) {
                 participant.getPlayer().getInventory().clear();
                 if(participant.getPlayer().isOp()) participant.getPlayer().getInventory().addItem(main.getCustomItems().GameSettingBook());
-                removePotionEffect(participant, PotionEffectType.SPEED);
+                removePotionEffect(participant);
                 participant.hideCustomBossBar(customBossBar);
             }
         }
@@ -375,5 +369,22 @@ public class Game {
     }
 
     private void addPotionEffect(GamePlayer gamePlayer, PotionEffect potionEffect){if(gamePlayer.getPlayer()!=null) gamePlayer.getPlayer().addPotionEffect(potionEffect);}
-    private void removePotionEffect(GamePlayer gamePlayer, PotionEffectType potionEffectType){if(gamePlayer.getPlayer()!=null) gamePlayer.getPlayer().removePotionEffect(potionEffectType);}
+    private void removePotionEffect(GamePlayer gamePlayer){if(gamePlayer.getPlayer()!=null) gamePlayer.getPlayer().removePotionEffect(PotionEffectType.SPEED);}
+
+    public void loadOptions(ConfigManager configManager){
+        gameMode = configManager.getGameMode();
+        baseLocation = configManager.getBaseLocation();
+        correctLocation = configManager.getCorrectLocation();
+        maxTurn = configManager.getMaxTurn();
+        maxPlayerSize = configManager.getMaxPlayerSize();
+        isColorRepeat = configManager.getIsColorRepeat();
+        speedModeSeconds = configManager.getSpeedModeTimerSeconds();
+    }
+
+    public void saveOptions(ConfigManager configManager){
+        configManager.setGameMode(gameMode);
+        configManager.setSpeedModeTimerSeconds(speedModeSeconds);
+        configManager.setIsColorRepeat(isColorRepeat);
+        //最後の参加者を記録する
+    }
 }

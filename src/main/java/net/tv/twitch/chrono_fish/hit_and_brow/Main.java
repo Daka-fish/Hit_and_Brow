@@ -20,7 +20,7 @@ public final class Main extends JavaPlugin {
         this.game = new Game(this);
         this.customItems = new CustomItems();
         this.configManager = new ConfigManager(this);
-        configManager.loadOptions();
+        game.loadOptions(configManager);
         getCommand("hab").setExecutor(new Commands(this));
         getCommand("hab").setTabCompleter(new TabCompleter());
         Bukkit.getPluginManager().registerEvents(new Events(this),this);
@@ -32,11 +32,10 @@ public final class Main extends JavaPlugin {
     @Override
     public void onDisable(){
         game.setBlackBlocks();
-        configManager.saveOptions();
+        game.saveOptions(configManager);
         saveConfig();
     }
 
     public Game getGame() {return game;}
     public CustomItems getCustomItems() {return customItems;}
-    public ConfigManager getConfigManager() {return configManager;}
 }

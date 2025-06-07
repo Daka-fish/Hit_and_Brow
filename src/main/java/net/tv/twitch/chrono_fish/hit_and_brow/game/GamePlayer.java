@@ -48,8 +48,8 @@ public class GamePlayer {
                 game.draw();
                 return;
             }
-            game.setNextPlayer();
             game.setTurnCount(game.getTurnCount()+1);
+            game.setNextPlayer();
         }
     }
 

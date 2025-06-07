@@ -49,7 +49,7 @@ public class CustomItems {
                         .clickEvent(ClickEvent.runCommand("/hab start"))
                         .hoverEvent(HoverEvent.showText(Component.text("ゲームを開始します"))))
                 .append(Component.text("\n\n+FINISH").decorate(TextDecoration.UNDERLINED)
-                        .clickEvent(ClickEvent.runCommand("/hab finish"))
+                        .clickEvent(ClickEvent.runCommand("/hab kill-game"))
                         .hoverEvent(HoverEvent.showText(Component.text("ゲームを強制終了します"))));
 
         bookMeta.addPages(text);
